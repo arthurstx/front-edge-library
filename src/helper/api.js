@@ -1,6 +1,4 @@
-// lib/api.js
-
-const API_URL = import.meta.env.VITE_API_URL;
+const API_URL = import.meta.env.VITE_API_URL
 
 /**
  * @typedef {Object} ApiResponse
@@ -11,76 +9,92 @@ const API_URL = import.meta.env.VITE_API_URL;
 
 async function request(
   path,
-  { method = "GET", body, token, headers = {} } = {},
+  {
+    method = 'GET',
+    body,
+    token,
+    headers = {},
+    credentials = 'omit', // omit | include | same-origin
+  } = {},
 ) {
   const defaultHeaders = {
-    "Content-Type": "application/json",
+    'Content-Type': 'application/json',
     ...(token && { Authorization: `Bearer ${token}` }),
     ...headers,
-  };
+  }
 
   try {
     const response = await fetch(`${API_URL}${path}`, {
       method,
+      credentials,
       headers: defaultHeaders,
       body: body ? JSON.stringify(body) : undefined,
-    });
+    })
 
-    if (!response.ok) {
-      const error = await response.text();
-      return {
-        data: null,
-        error: error || response.statusText,
-        status: response.status,
-      };
+    const contentType = response.headers.get('content-type')
+
+    let responseData = null
+
+    if (contentType?.includes('application/json')) {
+      responseData = await response.json()
+    } else {
+      responseData = await response.text()
     }
 
-    const data = await response.json();
-    return { data, error: null, status: response.status };
+    if (!response.ok) {
+      return {
+        data: null,
+        error: responseData?.error || responseData || response.statusText,
+        status: response.status,
+      }
+    }
+
+    return {
+      data: responseData,
+      error: null,
+      status: response.status,
+    }
   } catch (err) {
-    return { data: null, error: err.message ?? "Unknown error", status: 0 };
+    return {
+      data: null,
+      error: err?.message || 'Unknown error',
+      status: 0,
+    }
   }
 }
 
 /**
- * @param {string} path
- * @param {{ token?: string, headers?: Record<string, string> }} [options]
- * @returns {Promise<ApiResponse>}
+ * GET
  */
-const get = (path, options) => request(path, { ...options, method: "GET" });
+const get = (path, options) => request(path, { ...options, method: 'GET' })
 
 /**
- * @param {string} path
- * @param {any} body
- * @param {{ token?: string, headers?: Record<string, string> }} [options]
- * @returns {Promise<ApiResponse>}
+ * POST
  */
 const post = (path, body, options) =>
-  request(path, { ...options, method: "POST", body });
+  request(path, { ...options, method: 'POST', body })
 
 /**
- * @param {string} path
- * @param {any} body
- * @param {{ token?: string, headers?: Record<string, string> }} [options]
- * @returns {Promise<ApiResponse>}
+ * PUT
  */
 const put = (path, body, options) =>
-  request(path, { ...options, method: "PUT", body });
+  request(path, { ...options, method: 'PUT', body })
 
 /**
- * @param {string} path
- * @param {any} body
- * @param {{ token?: string, headers?: Record<string, string> }} [options]
- * @returns {Promise<ApiResponse>}
+ * PATCH
  */
 const patch = (path, body, options) =>
-  request(path, { ...options, method: "PATCH", body });
+  request(path, { ...options, method: 'PATCH', body })
 
 /**
- * @param {string} path
- * @param {{ token?: string, headers?: Record<string, string> }} [options]
- * @returns {Promise<ApiResponse>}
+ * DELETE
  */
-const del = (path, options) => request(path, { ...options, method: "DELETE" });
+const del = (path, options) => request(path, { ...options, method: 'DELETE' })
 
-export const api = { get, post, put, patch, delete: del };
+export const api = {
+  get,
+  post,
+  put,
+  patch,
+  delete: del,
+}

@@ -1,24 +1,39 @@
 import { api } from '../../../../helper/api'
 import { toast } from 'sonner'
+import { tokenStore } from '../../../../helper/auth'
 
 export function useLogin() {
+  const { set } = tokenStore
   async function authentication(data) {
-    try {
-      const response = await api.post('/auth/login', {
+    const response = await api.post(
+      '/auth/login',
+      {
         email: data.email,
         password: data.password,
-      })
-
-      if (response.status === 401) {
-        toast.error('Invalid email or password')
-      } else if (response.status === 200) {
-        toast.success('Login successful')
-      }
-    } catch (error) {
-      toast.error('An error occurred during login')
-      throw error
+      },
+      {
+        credentials: 'include',
+      },
+    )
+    const { error } = response
+    if (error) {
+      toast.error(error.message || 'Error signing in. Please try again.')
+    } else if (response.status === 200) {
+      const { token } = response.data
+      set(token)
+      toast.success('Login successful')
     }
   }
 
-  return { authentication }
+  async function refreshToken() {
+    const response = await api.post('/auth/refresh', null, {
+      credentials: 'include',
+    })
+    if (response.status === 200) {
+      const { token } = response.data
+      set(token)
+    }
+  }
+
+  return { authentication, refreshToken }
 }

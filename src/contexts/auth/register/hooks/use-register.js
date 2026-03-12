@@ -12,7 +12,7 @@ export function useRegister() {
         email: data.email,
         password: data.password,
       })
-      const error = JSON.parse(response.error)
+      const error = response.error
       if (error) {
         toast.error(error.message || 'Error signing up. Please try again.')
       } else if (response.status === 201 || response.status === 200) {
