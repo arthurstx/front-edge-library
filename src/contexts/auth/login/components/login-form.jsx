@@ -1,29 +1,32 @@
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { InputField } from "../../components/input-field";
-import React from "react";
-import { loginFormSchema } from "../models/schemas";
-import { Button } from "../../../../components/button";
-import { useLogin } from "../hooks/use-login";
+import { useForm } from 'react-hook-form'
+import { zodResolver } from '@hookform/resolvers/zod'
+import { InputField } from '../../components/input-field'
+import React from 'react'
+import { loginFormSchema } from '../models/schemas'
+import { Button } from '../../../../components/button'
+import { useLogin } from '../hooks/use-login'
+import { Link } from 'react-router'
+
 /**
  * @typedef {{ email: string, password: string }} LoginCredentials
  * @typedef {{ email?: string, password?: string }} FieldErrors
  */
 
 export function LoginForm() {
-  const { authentication } = useLogin();
+  const { authentication } = useLogin()
+  const [isLoading, setIsLoading] = React.useTransition(false)
   const form = useForm({
     resolver: zodResolver(loginFormSchema),
-  });
+  })
 
   async function handleSubmit(data) {
-    await authentication(data);
+    setIsLoading(async () => {
+      await authentication(data)
+    })
   }
-  const isLoading = false;
   return (
     <div className="w-full md:w-1/2 p-8 flex flex-col justify-center">
       <h1 className="text-3xl font-semibold text-white mb-6">Welcome Back</h1>
-
       <form
         onSubmit={form.handleSubmit(handleSubmit)}
         className="flex flex-col gap-4"
@@ -31,7 +34,7 @@ export function LoginForm() {
         <InputField
           label="Email"
           type="email"
-          {...form.register("email")}
+          {...form.register('email')}
           placeholder="your@email.com"
           error={form.formState.errors.email?.message}
           disabled={isLoading}
@@ -39,7 +42,7 @@ export function LoginForm() {
         <InputField
           label="Password"
           type="password"
-          {...form.register("password")}
+          {...form.register('password')}
           placeholder="••••••••"
           error={form.formState.errors.password?.message}
           disabled={isLoading}
@@ -47,7 +50,7 @@ export function LoginForm() {
 
         <Button
           type="submit"
-          variant={isLoading ? "ghost" : "primary"}
+          variant={isLoading ? 'ghost' : 'primary'}
           full
           handling={isLoading}
           className="mt-2"
@@ -55,12 +58,12 @@ export function LoginForm() {
           Sign In
         </Button>
       </form>
-      {/*   <Link
+      <Link
         to="/auth/register"
         className=" text-sm text-zinc-400 mt-3 hover:text-zinc-200 transition"
       >
         Don't have an account? Register
-      </Link>*/}
+      </Link>
     </div>
-  );
+  )
 }
