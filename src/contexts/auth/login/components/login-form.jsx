@@ -13,7 +13,7 @@ import { Link } from 'react-router'
  */
 
 export function LoginForm() {
-  const { authentication, refreshToken } = useLogin()
+  const { authentication } = useLogin()
   const [isLoading, setIsLoading] = React.useTransition(false)
   const form = useForm({
     resolver: zodResolver(loginFormSchema),
@@ -56,16 +56,6 @@ export function LoginForm() {
           className="mt-2"
         >
           Sign In
-        </Button>
-        <Button
-          type="button"
-          onClick={() => refreshToken()}
-          variant="primary"
-          full
-          handling={isLoading}
-          className="mt-2"
-        >
-          refresh{' '}
         </Button>
       </form>
       <Link

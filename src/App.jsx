@@ -3,6 +3,7 @@ import { Register } from './pages/auth/register'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { Routes, Route, BrowserRouter } from 'react-router'
 import { Toaster } from 'sonner'
+import { Dashboard } from './pages/dashboard'
 
 const queryClient = new QueryClient()
 
@@ -14,6 +15,7 @@ function App() {
         <Routes>
           <Route path="/" element={<Login />} />
           <Route path="auth/register" element={<Register />} />
+          <Route path="dashboard" element={<Dashboard />} />
         </Routes>
       </BrowserRouter>
     </QueryClientProvider>
