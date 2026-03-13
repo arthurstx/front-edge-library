@@ -1,10 +1,18 @@
-import { VariantProps } from 'class-variance-authority'
-import { textVariants } from '../text'
 import * as React from 'react'
 
-export interface TextProps
-  extends React.HTMLAttributes<HTMLElement>, VariantProps<typeof textVariants> {
+type TextVariant =
+  | 'heading-large'
+  | 'heading-medium'
+  | 'heading-small'
+  | 'paragraph-large'
+  | 'paragraph-medium'
+  | 'paragraph-small'
+  | 'label-medium'
+  | 'label-small'
+
+export interface TextProps {
   as?: keyof React.JSX.IntrinsicElements
+  variant?: TextVariant
   className?: string
   children?: React.ReactNode
 }
