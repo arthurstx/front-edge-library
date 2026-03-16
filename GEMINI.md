@@ -1,18 +1,16 @@
-# Front-Edge Library - Especificações do Projeto
+# Front-Edge Library - Project Specifications
 
-## 🚀 Visão Geral
+## 🚀 Overview
 
-Este projeto é uma biblioteca de componentes e funcionalidades construída com foco em performance, manutenibilidade e experiência do desenvolvedor.
+This project is a component and functionality library built with a focus on performance, maintainability, and developer experience.
 
-### Tech Stack Principal
+### Main Tech Stack
 
 - **Framework:** React 19
-- **Roteamento:** React Router v7
-- **Data Fetching:** React Query v5 (@tanstack/react-query)
-- **Estilização:** Tailwind CSS v4 (via @tailwindcss/vite)
-- **Formulários:** React Hook Form + Zod
-- **Componentes:** CVA (class-variance-authority) + clsx + tailwind-merge
-- **Notificações:** Sonner
+- **Routing:** React Router v7
+- **Forms:** React Hook Form + Zod
+- **Components:** CVA (class-variance-authority) + clsx + tailwind-merge
+- **Notifications:** Sonner
 - **Bundler:** Vite 8
 - **SVG:** vite-plugin-svgr
 
@@ -126,9 +124,9 @@ export function Skeleton({ rounded, className, ...props }) { ... }
 | HTML elements     | Prefer native over wrapper components                |
 | Props             | Always spread `...props` onto root element           |
 
-### Importação de SVGs
+### SVG Imports
 
-SVGs devem ser importados como componentes React através do sufixo `?react`:
+SVGs must be imported as React components using the `?react` suffix:
 
 ```jsx
 import MyIcon from './assets/my-icon.svg?react'
@@ -138,17 +136,17 @@ const Component = () => <MyIcon className="w-4 h-4" />
 
 ---
 
-## 🎨 Guia de Estilização
+## 🎨 Styling Guide
 
-- **Tailwind CSS v4:** Única fonte de estilos.
-- **CSS Inline:** Proibido, exceto para valores dinâmicos calculados em tempo de execução que não podem ser resolvidos via classes.
-- **Arquivos CSS:** Não crie arquivos `.css` por componente. Utilize as utilidades do Tailwind e o CVA para variantes.
+- **Tailwind CSS v4:** The sole source of styles.
+- **Inline CSS:** Forbidden, except for dynamic values computed at runtime that cannot be resolved via utility classes.
+- **CSS Files:** Do not create per-component `.css` files. Use Tailwind utilities and CVA for variants.
 
 ---
 
-## 📝 Guia de Formulários
+## 📝 Forms Guide
 
-Padrão obrigatório: **React Hook Form** + **Zod**.
+Required pattern: **React Hook Form** + **Zod**.
 
 ```jsx
 import { useForm } from 'react-hook-form'
@@ -169,22 +167,22 @@ const MyForm = () => {
 
 ---
 
-## 🌐 Guia de Data Fetching
+## 🌐 Data Fetching Guide
 
-Utilize **React Query v5** para todas as interações assíncronas com APIs.
+Use **React Query v5** for all asynchronous API interactions.
 
-- Siga a convenção de Query Keys (arrays).
-- Centralize hooks de mutation/query quando possível.
+- Follow the Query Keys convention (arrays).
+- Centralize mutation/query hooks whenever possible.
 
 ---
 
-## 🔔 Notificações
+## 🔔 Notifications
 
-Utilize o **Sonner** para feedbacks visuais.
+Use **Sonner** for visual feedback.
 
 ```javascript
 import { toast } from 'sonner'
 
-toast.success('Operação realizada com sucesso!')
-toast.error('Ocorreu um erro.')
+toast.success('Operation completed successfully!')
+toast.error('An error occurred.')
 ```

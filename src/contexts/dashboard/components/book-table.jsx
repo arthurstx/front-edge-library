@@ -3,8 +3,11 @@ import { Text } from '../../../components/text'
 import { InputField } from '../../auth/components/input-field'
 import { BookTableRow } from './book-table-row'
 import { Pagination } from './pagination'
+import { BookTableRowSkeleton } from './book-table-row-skeleton'
+import { useBooks } from '../hooks/use-books'
+import { useBook } from '../hooks/use-book'
 
-const COLUMNS = ['Título', 'Autor', 'Estoque', 'Ações']
+const COLUMNS = ['Title', 'Author', 'Category', 'Stock', 'Actions']
 
 /**
  * @param {{
@@ -21,22 +24,20 @@ const COLUMNS = ['Título', 'Autor', 'Estoque', 'Ações']
  * }} props
  */
 export function BookTable({
-  books = [],
   loading = false,
   currentPage = 1,
   totalPages = 1,
   onPageChange,
   onAddStock,
   onDelete,
-  searchValue,
+  searchValue = '',
   onSearchChange,
   className,
 }) {
-  const rows = [
-    { id: '1', title: 'O Senhor dos Anéis', author: 'J Tolkien', stock: 12 },
-    { id: '2', title: '1984', author: 'George Orwell', stock: 2 },
-    { id: '3', title: 'Dom Casmurro', author: 'Machado de Assis', stock: 0 },
-  ]
+  const { books, isLoadingBooks = true } = useBooks()
+  const { addStock, deleteBook } = useBook()
+
+
 
   return (
     <div
@@ -72,7 +73,7 @@ export function BookTable({
                 key={col}
                 className={cx(
                   'py-3 px-4 text-left text-[11px] font-semibold tracking-wider uppercase text-white',
-                  col === 'Ações' && 'text-right',
+                  col === 'Actions' && 'text-right',
                 )}
               >
                 {col}
@@ -82,17 +83,20 @@ export function BookTable({
         </thead>
 
         <tbody>
-          {rows.map((book, index) => (
-            <BookTableRow
-              key={book?.id ?? index}
-              book={book}
-              loading={loading}
-              onAddStock={onAddStock}
-              onDelete={onDelete}
-            />
-          ))}
+          {isLoadingBooks
+            ? Array.from({ length: 4 }).map((_, index) => (
+                <BookTableRowSkeleton key={index} />
+              ))
+            : books.map((book) => (
+                <BookTableRow
+                  key={book.id}
+                  book={book}
+                  onAddStock={addStock}
+                  onDelete={deleteBook}
+                />
+              ))}
 
-          {!loading && books.length === 0 && (
+          {!isLoadingBooks && books.length === 0 && (
             <tr>
               <td
                 colSpan={4}

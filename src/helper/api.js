@@ -1,4 +1,25 @@
+import { tokenStore } from '../helper/auth'
 const API_URL = import.meta.env.VITE_API_URL
+
+let isRefreshing = false
+let refreshQueue = []
+
+function processQueue(error, token = null) {
+  refreshQueue.forEach((cb) => (error ? cb.reject(error) : cb.resolve(token)))
+  refreshQueue = []
+}
+
+async function refreshAccessToken() {
+  const response = await fetch(`${API_URL}/auth/refresh`, {
+    method: 'POST',
+    credentials: 'include',
+  })
+
+  if (!response.ok) return null
+
+  const data = await response.json()
+  return data?.accessToken ?? null
+}
 
 /**
  * @typedef {Object} ApiResponse
@@ -7,6 +28,11 @@ const API_URL = import.meta.env.VITE_API_URL
  * @property {number} status
  */
 
+/**
+ * @param {string} path
+ * @param {{ method?: string, body?: any, token?: string, headers?: Record<string, string>, credentials?: RequestCredentials, _retry?: boolean }} [options]
+ * @returns {Promise<ApiResponse>}
+ */
 async function request(
   path,
   {
@@ -14,7 +40,8 @@ async function request(
     body,
     token,
     headers = {},
-    credentials = 'omit', // omit | include | same-origin
+    credentials = 'omit',
+    _retry = false,
   } = {},
 ) {
   const defaultHeaders = {
@@ -31,14 +58,57 @@ async function request(
       body: body ? JSON.stringify(body) : undefined,
     })
 
-    const contentType = response.headers.get('content-type')
+    console.log(response)
 
+    const contentType = response.headers.get('content-type')
     let responseData = null
 
     if (contentType?.includes('application/json')) {
       responseData = await response.json()
     } else {
       responseData = await response.text()
+    }
+
+    if (response.status === 401 && !_retry) {
+      if (isRefreshing) {
+        return new Promise((resolve, reject) => {
+          refreshQueue.push({ resolve, reject })
+        }).then((newToken) =>
+          request(path, {
+            method,
+            body,
+            headers,
+            credentials,
+            token: newToken,
+            _retry: true,
+          }),
+        )
+      }
+
+      isRefreshing = true
+
+      const newToken = await refreshAccessToken()
+
+      isRefreshing = false
+
+      if (!newToken) {
+        processQueue(new Error('Session expired'))
+        tokenStore.clear()
+        window.location.href = '/'
+        return { data: null, error: 'Session expired', status: 401 }
+      }
+
+      tokenStore.set(newToken)
+      processQueue(null, newToken)
+
+      return request(path, {
+        method,
+        body,
+        headers,
+        credentials,
+        token: newToken,
+        _retry: true,
+      })
     }
 
     if (!response.ok) {
@@ -55,6 +125,7 @@ async function request(
       status: response.status,
     }
   } catch (err) {
+    if (import.meta.env.DEV) console.error(`[api] ${method} ${path}`, err)
     return {
       data: null,
       error: err?.message || 'Unknown error',
@@ -64,30 +135,43 @@ async function request(
 }
 
 /**
- * GET
+ * @param {string} path
+ * @param {Object} [options]
+ * @returns {Promise<ApiResponse>}
  */
 const get = (path, options) => request(path, { ...options, method: 'GET' })
 
 /**
- * POST
+ * @param {string} path
+ * @param {any} body
+ * @param {Object} [options]
+ * @returns {Promise<ApiResponse>}
  */
 const post = (path, body, options) =>
   request(path, { ...options, method: 'POST', body })
 
 /**
- * PUT
+ * @param {string} path
+ * @param {any} body
+ * @param {Object} [options]
+ * @returns {Promise<ApiResponse>}
  */
 const put = (path, body, options) =>
   request(path, { ...options, method: 'PUT', body })
 
 /**
- * PATCH
+ * @param {string} path
+ * @param {any} body
+ * @param {Object} [options]
+ * @returns {Promise<ApiResponse>}
  */
 const patch = (path, body, options) =>
   request(path, { ...options, method: 'PATCH', body })
 
 /**
- * DELETE
+ * @param {string} path
+ * @param {Object} [options]
+ * @returns {Promise<ApiResponse>}
  */
 const del = (path, options) => request(path, { ...options, method: 'DELETE' })
 

@@ -20,7 +20,7 @@ const stockBadgeVariants = cva(
  */
 export function Badge({ quantity, loading, className }) {
   if (loading)
-    return <Skeleton className={cx('w-20 h-5', className)} rounded="full" />
+    return <Skeleton className={cx('w-24 h-8', className)} rounded="full" />
 
   const level = quantity === 0 ? 'out' : quantity <= 5 ? 'low' : 'high'
   const label = quantity === 0 ? 'Sem estoque' : `${quantity} unidades`

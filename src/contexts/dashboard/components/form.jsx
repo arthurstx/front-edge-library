@@ -2,6 +2,11 @@ import { cva, cx } from 'class-variance-authority'
 import { Button } from '../../../components/button'
 import { InputField } from '../../auth/components/input-field'
 import { Text } from '../../../components/text'
+import React from 'react'
+import { useBook } from '../hooks/use-book'
+import { useForm } from 'react-hook-form'
+import { bookFormSchema } from '../models/schemas'
+import { zodResolver } from '@hookform/resolvers/zod'
 
 const formCardVariants = cva('flex flex-col gap-5 rounded-xl border p-5', {
   variants: {
@@ -18,9 +23,9 @@ const formCardVariants = cva('flex flex-col gap-5 rounded-xl border p-5', {
 /**
  * @param {{ variant?: "default" | "muted", title: string, endpoint: string, className?: string, children: React.ReactNode }} props
  */
-function FormCard({ variant, title, endpoint, className, children }) {
+function FormCard({ variant, title, endpoint, className, children, ...props }) {
   return (
-    <div className={cx(formCardVariants({ variant }), className)}>
+    <form className={cx(formCardVariants({ variant }), className)} {...props}>
       <Text
         as="p"
         variant="label-small"
@@ -33,29 +38,55 @@ function FormCard({ variant, title, endpoint, className, children }) {
       </Text>
 
       {children}
-    </div>
+    </form>
   )
 }
 
 /**
  * @param {{ variant?: "default" | "muted", onSubmit?: (e: React.FormEvent) => void, handling?: boolean, className?: string }} props
  */
-export function BookForm({ variant, onSubmit, handling, className }) {
+export function BookForm() {
+  const form = useForm({
+    resolver: zodResolver(bookFormSchema),
+  })
+  const [isLoading, setIsLoading] = React.useTransition()
+  const { addBook } = useBook()
+
+  function handleSubmit(data) {
+    setIsLoading(async () => await addBook(data))
+    console.log(data)
+    form.reset()
+  }
+
   return (
     <FormCard
-      variant={variant}
       title="Novo Livro"
       endpoint="POST /book/create"
-      className={className}
+      onSubmit={form.handleSubmit(handleSubmit)}
     >
-      <InputField label="Título" placeholder="Ex: O Senhor dos Anéis" />
+      <InputField
+        label="Título"
+        placeholder="Ex: O Senhor dos Anéis"
+        error={form.formState.errors.title?.message}
+        {...form.register('title')}
+      />
 
       <div className="grid grid-cols-2 gap-3">
-        <InputField label="Autor" placeholder="J.R.R. Tolkien" />
-        <InputField label="Categoria" placeholder="Fantasia" />
+        <InputField
+          label="Autor"
+          placeholder="J.R.R. Tolkien"
+          error={form.formState.errors.author?.message}
+          {...form.register('author')}
+        />
+        <InputField
+          label="Categoria"
+          placeholder="Fantasia"
+          error={form.formState.errors.category?.message}
+          {...form.register('category')}
+        />
       </div>
 
-      <Button variant="primary" full handling={handling} onClick={onSubmit}>
+      <Button type="submit" variant="primary" full handling={isLoading}>
         Cadastrar Livro
       </Button>
     </FormCard>
@@ -66,6 +97,7 @@ export function BookForm({ variant, onSubmit, handling, className }) {
  * @param {{ variant?: "default" | "muted", onSubmit?: (e: React.FormEvent) => void, handling?: boolean, className?: string }} props
  */
 export function RentalForm({ variant, onSubmit, handling, className }) {
+  const form = useForm()
   return (
     <FormCard
       variant={variant}
@@ -73,9 +105,17 @@ export function RentalForm({ variant, onSubmit, handling, className }) {
       endpoint="POST /rental"
       className={className}
     >
-      <InputField label="ID do Usuário" placeholder="uuid-do-usuario" />
+      <InputField
+        label="ID do Usuário"
+        placeholder="uuid-do-usuario"
+        {...form.register('userId')}
+      />
 
-      <InputField label="ID do Livro" placeholder="uuid-do-livro" />
+      <InputField
+        label="ID do Livro"
+        placeholder="uuid-do-livro"
+        {...form.register('bookId')}
+      />
 
       <Button variant="secondary" full handling={handling} onClick={onSubmit}>
         Registrar Saída
