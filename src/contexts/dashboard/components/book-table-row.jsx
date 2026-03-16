@@ -2,15 +2,16 @@ import { Badge } from '../../../components/badge'
 import Icon from '../../../components/icon'
 import TrashIcon from '../../../assets/trash.svg?react'
 import { AddStockDialog } from './add-stock-dialog'
+import { EditBookDialog } from './edit-book-dialog'
 
 /**
  *  @typedef { import('../../../types/schema.d.ts').Book } Book
  */
 
 /**
- * @param {{ book: Book, onAddStock?: (data: { bookId: string, quantity: number }) => void, onDelete?: (id: string) => void }} props
+ * @param {{ book: Book, onAddStock?: (data: { bookId: string, quantity: number }) => void, onDelete?: (id: string) => void, onEditBook?: (data: Book) => void }} props
  */
-export function BookTableRow({ book, onAddStock, onDelete }) {
+export function BookTableRow({ book, onAddStock, onDelete, onEditBook }) {
   return (
     <tr className="border-t bg-zinc-700 border-zinc-600 hover:bg-zinc-600 transition">
       <td className="py-4 px-4 text-sm text-white font-medium">{book.title}</td>
@@ -29,6 +30,9 @@ export function BookTableRow({ book, onAddStock, onDelete }) {
             onConfirm={(data) =>
               onAddStock({ bookId: book.id, quantity: data.quantity })
             }
+          />
+          <EditBookDialog
+            onConfirm={(data) => onEditBook?.({ ...data, id: book.id })}
           />
           <button
             className="text-gray-400 hover:text-red-500 transition"

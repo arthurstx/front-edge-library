@@ -35,9 +35,7 @@ export function BookTable({
   className,
 }) {
   const { books, isLoadingBooks = true } = useBooks()
-  const { addStock, deleteBook } = useBook()
-
-
+  const { addStock, deleteBook, updateBook } = useBook()
 
   return (
     <div
@@ -93,6 +91,7 @@ export function BookTable({
                   book={book}
                   onAddStock={addStock}
                   onDelete={deleteBook}
+                  onEditBook={updateBook}
                 />
               ))}
 

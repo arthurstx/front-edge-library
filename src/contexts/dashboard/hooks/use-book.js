@@ -32,7 +32,6 @@ export function useBook() {
     await queryClient.cancelQueries(['books'])
     const previousBooks = queryClient.getQueryData(['books'])
 
-    // Update otimista
     queryClient.setQueryData(['books'], (oldData) => {
       if (!oldData) return oldData
       return oldData.map((book) => {
@@ -58,6 +57,38 @@ export function useBook() {
 
     toast.success('Stock added successfully')
   }
+  async function updateBook(data) {
+    console.log('data in useBook:', data)
+    await queryClient.cancelQueries(['books'])
+    const previousBooks = queryClient.getQueryData(['books'])
+
+    queryClient.setQueryData(['books'], (oldData) => {
+      if (!oldData) return oldData
+      return oldData.map((book) => {
+        if (book.id === data.id) {
+          return { ...book, ...data }
+        }
+        return book
+      })
+    })
+
+    const response = await api.patch(
+      `/book/update/${data.id}`,
+      { data },
+      {
+        token: get(),
+      },
+    )
+
+    if (response.error) {
+      queryClient.setQueryData(['books'], previousBooks)
+      queryClient.invalidateQueries(['books'])
+      toast.error(response.error.message || 'update book failed')
+      return
+    }
+
+    toast.success('Book updated successfully')
+  }
 
   async function deleteBook(id) {
     const respose = await api.delete(`/book/delete/${id}`, {
@@ -79,5 +110,6 @@ export function useBook() {
     addBook,
     deleteBook,
     addStock,
+    updateBook,
   }
 }

@@ -20,9 +20,6 @@ const formCardVariants = cva('flex flex-col gap-5 rounded-xl border p-5', {
   },
 })
 
-/**
- * @param {{ variant?: "default" | "muted", title: string, endpoint: string, className?: string, children: React.ReactNode }} props
- */
 function FormCard({ variant, title, endpoint, className, children, ...props }) {
   return (
     <form className={cx(formCardVariants({ variant }), className)} {...props}>
@@ -42,13 +39,65 @@ function FormCard({ variant, title, endpoint, className, children, ...props }) {
   )
 }
 
-/**
- * @param {{ variant?: "default" | "muted", onSubmit?: (e: React.FormEvent) => void, handling?: boolean, className?: string }} props
- */
+function SelectField({
+  label,
+  error,
+  disabled,
+  className,
+  children,
+  ...props
+}) {
+  return (
+    <div className="flex flex-col gap-1">
+      {label && (
+        <Text as="label" variant="paragraph-small" className="text-zinc-400">
+          {label}
+        </Text>
+      )}
+      <select
+        disabled={disabled}
+        className={cx(
+          'w-full bg-zinc-700 text-white px-4 py-2 rounded-lg outline-none transition',
+          'focus:ring-2 focus:ring-blue-500',
+          "appearance-none bg-[url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%23a1a1aa' stroke-width='2'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E\")] bg-no-repeat bg-[right_12px_center]",
+          error && 'ring-2 ring-red-500 focus:ring-red-500',
+          disabled && 'opacity-50 pointer-events-none',
+          className,
+        )}
+        {...props}
+      >
+        {children}
+      </select>
+      {error && (
+        <Text variant="paragraph-small" className="text-red-400">
+          {error}
+        </Text>
+      )}
+    </div>
+  )
+}
+
 export function BookForm() {
+  const CATEGORIES = [
+    'Fiction',
+    'Non-Fiction',
+    'Science',
+    'History',
+    'Biography',
+    'Fantasy',
+    'Mystery',
+    'Romance',
+    'Technology',
+    'Philosophy',
+  ]
+
   const form = useForm({
     resolver: zodResolver(bookFormSchema),
+    defaultValues: {
+      category: '',
+    },
   })
+
   const [isLoading, setIsLoading] = React.useTransition()
   const { addBook } = useBook()
 
@@ -78,12 +127,20 @@ export function BookForm() {
           error={form.formState.errors.author?.message}
           {...form.register('author')}
         />
-        <InputField
-          label="Categoria"
-          placeholder="Fantasia"
+
+        <SelectField
+          label="Category"
+          disabled={isLoading}
           error={form.formState.errors.category?.message}
-          {...form.register('category')}
-        />
+          {...form.register('category', { required: 'Category is required' })}
+        >
+          <option value="">Selecione uma categoria</option>
+          {CATEGORIES.map((category) => (
+            <option key={category} value={category}>
+              {category}
+            </option>
+          ))}
+        </SelectField>
       </div>
 
       <Button type="submit" variant="primary" full handling={isLoading}>
@@ -93,11 +150,9 @@ export function BookForm() {
   )
 }
 
-/**
- * @param {{ variant?: "default" | "muted", onSubmit?: (e: React.FormEvent) => void, handling?: boolean, className?: string }} props
- */
 export function RentalForm({ variant, onSubmit, handling, className }) {
   const form = useForm()
+
   return (
     <FormCard
       variant={variant}
