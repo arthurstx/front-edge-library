@@ -17,13 +17,12 @@ export function useBooks() {
         toast.error(respose.error.message || 'fetch books failed')
         return []
       }
-      console.log(respose.data)
       return respose.data.books
     },
   })
 
   return {
-    books: data,
+    books: data ?? [],
     isLoadingBooks: isLoading,
   }
 }

@@ -5,42 +5,118 @@ import { BookTableRow } from './book-table-row'
 import { Pagination } from './pagination'
 import { BookTableRowSkeleton } from './book-table-row-skeleton'
 import { useBooks } from '../hooks/use-books'
+import { useSearchBooks } from '../hooks/use-seach-books'
 import { useBook } from '../hooks/use-book'
+import { debounce } from '../../../helper/debouce'
+import React from 'react'
 
 const COLUMNS = ['Title', 'Author', 'Category', 'Stock', 'Actions']
 
 /**
  * @param {{
- *   books?: Array<{ id: string, title: string, author: string, stock: number }>,
- *   loading?: boolean,
- *   currentPage?: number,
  *   totalPages?: number,
  *   onPageChange?: (page: number) => void,
- *   onAddStock?: (id: string) => void,
- *   onDelete?: (id: string) => void,
- *   searchValue?: string,
- *   onSearchChange?: (value: string) => void,
+ *   currentPage?: number,
  *   className?: string,
  * }} props
  */
 export function BookTable({
-  loading = false,
-  currentPage = 1,
   totalPages = 1,
   onPageChange,
-  onAddStock,
-  onDelete,
-  searchValue = '',
-  onSearchChange,
+  currentPage = 1,
   className,
 }) {
   const { books, isLoadingBooks = true } = useBooks()
   const { addStock, deleteBook, updateBook } = useBook()
+  const {
+    filters,
+    books: searchBooks,
+    isLoadingBooks: isSearchLoading,
+  } = useSearchBooks()
+
+  const [inputValue, setInputValue] = React.useState('')
+
+  const setQueryRef = React.useRef(filters.setQuery)
+
+  React.useEffect(() => {
+    setQueryRef.current = filters.setQuery
+  }, [filters.setQuery])
+
+  const debouncedSetValue = React.useRef(
+    // eslint-disable-next-line react-hooks/refs
+    debounce((value) => setQueryRef.current(value), 400),
+  ).current
+
+  function handleInputChange(e) {
+    const value = e.target.value
+    setInputValue(value)
+    debouncedSetValue(value)
+  }
+
+  const isSearching = inputValue !== ''
+
+  function renderTableBody() {
+    // — Modo busca —
+    if (isSearching) {
+      if (isSearchLoading) {
+        return Array.from({ length: 4 }).map((_, index) => (
+          <BookTableRowSkeleton key={index} />
+        ))
+      }
+
+      if (searchBooks.length === 0) {
+        return (
+          <tr>
+            <td colSpan={5} className="py-10 text-center text-sm text-gray-400">
+              Nenhum resultado encontrado para "{inputValue}".
+            </td>
+          </tr>
+        )
+      }
+
+      return searchBooks.map((book) => (
+        <BookTableRow
+          key={book.id}
+          book={book}
+          onAddStock={addStock}
+          onDelete={deleteBook}
+          onEditBook={updateBook}
+        />
+      ))
+    }
+
+    // — Modo listagem normal —
+    if (isLoadingBooks) {
+      return Array.from({ length: 4 }).map((_, index) => (
+        <BookTableRowSkeleton key={index} />
+      ))
+    }
+
+    if (books.length === 0) {
+      return (
+        <tr>
+          <td colSpan={5} className="py-10 text-center text-sm text-gray-400">
+            Nenhum livro encontrado.
+          </td>
+        </tr>
+      )
+    }
+
+    return books.map((book) => (
+      <BookTableRow
+        key={book.id}
+        book={book}
+        onAddStock={addStock}
+        onDelete={deleteBook}
+        onEditBook={updateBook}
+      />
+    ))
+  }
 
   return (
     <div
       className={cx(
-        'flex flex-col rounded-xl border border-zinc-600 bg-zinc-900 overflow-hidden',
+        'flex flex-col rounded-xl border mb-5 border-zinc-600 bg-zinc-900 overflow-hidden',
         className,
       )}
     >
@@ -58,8 +134,8 @@ export function BookTable({
 
         <InputField
           placeholder="Buscar..."
-          value={searchValue}
-          onChange={(e) => onSearchChange?.(e.target.value)}
+          value={inputValue}
+          onChange={handleInputChange}
         />
       </div>
 
@@ -80,35 +156,10 @@ export function BookTable({
           </tr>
         </thead>
 
-        <tbody>
-          {isLoadingBooks
-            ? Array.from({ length: 4 }).map((_, index) => (
-                <BookTableRowSkeleton key={index} />
-              ))
-            : books.map((book) => (
-                <BookTableRow
-                  key={book.id}
-                  book={book}
-                  onAddStock={addStock}
-                  onDelete={deleteBook}
-                  onEditBook={updateBook}
-                />
-              ))}
-
-          {!isLoadingBooks && books.length === 0 && (
-            <tr>
-              <td
-                colSpan={4}
-                className="py-10 text-center text-sm text-gray-400"
-              >
-                Nenhum livro encontrado.
-              </td>
-            </tr>
-          )}
-        </tbody>
+        <tbody>{renderTableBody()}</tbody>
       </table>
 
-      {totalPages > 1 && (
+      {!isSearching && totalPages > 1 && (
         <Pagination
           currentPage={currentPage}
           totalPages={totalPages}
