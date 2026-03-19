@@ -58,7 +58,6 @@ export function useBook() {
     toast.success('Stock added successfully')
   }
   async function updateBook(data) {
-    console.log('data in useBook:', data)
     await queryClient.cancelQueries(['books'])
     const previousBooks = queryClient.getQueryData(['books'])
 
@@ -99,11 +98,11 @@ export function useBook() {
     }
 
     toast.success('Book deleted successfully')
-    queryClient.invalidateQueries(['books'])
     queryClient.setQueriesData(['books'], (oldData) => {
       if (!oldData) return oldData
       return oldData.filter((book) => book.id !== id)
     })
+    queryClient.invalidateQueries(['books'])
   }
 
   return {

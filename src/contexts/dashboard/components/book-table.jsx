@@ -26,6 +26,8 @@ export function BookTable({
   currentPage = 1,
   className,
 }) {
+  const [inputValue, setInputValue] = React.useState('')
+
   const { books, isLoadingBooks = true } = useBooks()
   const { addStock, deleteBook, updateBook } = useBook()
   const {
@@ -34,7 +36,10 @@ export function BookTable({
     isLoadingBooks: isSearchLoading,
   } = useSearchBooks()
 
-  const [inputValue, setInputValue] = React.useState('')
+  const isSearching =
+    filters.query !== null &&
+    filters.query !== undefined &&
+    filters.query !== ''
 
   const setQueryRef = React.useRef(filters.setQuery)
 
@@ -53,10 +58,7 @@ export function BookTable({
     debouncedSetValue(value)
   }
 
-  const isSearching = inputValue !== ''
-
   function renderTableBody() {
-    // — Modo busca —
     if (isSearching) {
       if (isSearchLoading) {
         return Array.from({ length: 4 }).map((_, index) => (

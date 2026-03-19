@@ -7,6 +7,8 @@ import { useBook } from '../hooks/use-book'
 import { useForm } from 'react-hook-form'
 import { bookFormSchema } from '../models/schemas'
 import { zodResolver } from '@hookform/resolvers/zod'
+import { useRental } from '../../rentals/hooks/use-rental'
+import { rentalFormSchema } from '../../rentals/models/schemas'
 
 const formCardVariants = cva('flex flex-col gap-5 rounded-xl border p-5', {
   variants: {
@@ -116,6 +118,7 @@ export function BookForm() {
       <InputField
         label="Título"
         placeholder="Ex: O Senhor dos Anéis"
+        disabled={isLoading}
         error={form.formState.errors.title?.message}
         {...form.register('title')}
       />
@@ -124,6 +127,7 @@ export function BookForm() {
         <InputField
           label="Autor"
           placeholder="J.R.R. Tolkien"
+          disabled={isLoading}
           error={form.formState.errors.author?.message}
           {...form.register('author')}
         />
@@ -151,29 +155,52 @@ export function BookForm() {
 }
 
 export function RentalForm({ variant, onSubmit, handling, className }) {
-  const form = useForm()
+  const form = useForm({
+    resolver: zodResolver(rentalFormSchema),
+    defaultValues: {
+      category: '',
+    },
+  })
 
+  const [isLoading, setIsLoading] = React.useTransition()
+  const { create } = useRental()
+
+  function handleSubmit(data) {
+    setIsLoading(async () => await create(data))
+    console.log(data)
+    form.reset()
+  }
   return (
     <FormCard
       variant={variant}
       title="Novo Empréstimo"
       endpoint="POST /rental"
       className={className}
+      disabled={isLoading}
+      onSubmit={form.handleSubmit(handleSubmit)}
     >
       <InputField
         label="ID do Usuário"
         placeholder="uuid-do-usuario"
+        disabled={isLoading}
         {...form.register('userId')}
       />
 
       <InputField
         label="ID do Livro"
         placeholder="uuid-do-livro"
+        disabled={isLoading}
         {...form.register('bookId')}
       />
 
-      <Button variant="secondary" full handling={handling} onClick={onSubmit}>
-        Registrar Saída
+      <Button
+        type="submit"
+        variant="secondary"
+        full
+        handling={isLoading}
+        disabled={isLoading}
+      >
+        {isLoading ? 'Criando Empréstimo...' : 'Criar Empréstimo'}
       </Button>
     </FormCard>
   )

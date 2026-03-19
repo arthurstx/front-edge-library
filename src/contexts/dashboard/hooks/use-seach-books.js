@@ -10,7 +10,7 @@ export function useSearchBooks() {
   })
   const [page = 1, setPage] = useQueryState('page')
   const [query, setQuery] = useQueryState('query')
-
+  const enabled = query !== null && query !== undefined && query !== ''
   const { data, isLoading } = useQuery({
     queryKey: ['books', page, query],
     queryFn: async () => {
@@ -23,6 +23,7 @@ export function useSearchBooks() {
       }
       return response.data.books
     },
+    enabled,
   })
   return {
     books: data ?? [],
