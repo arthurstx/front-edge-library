@@ -14,11 +14,9 @@ async function refreshAccessToken() {
     method: 'POST',
     credentials: 'include',
   })
-
   if (!response.ok) return null
-
   const data = await response.json()
-  return data?.accessToken ?? null
+  return data.token ?? null
 }
 
 /**
