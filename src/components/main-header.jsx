@@ -3,9 +3,16 @@ import { Container } from './container'
 import { Button } from '../components/button'
 import { Text } from '../components/text'
 import { useAuth } from '../contexts/auth/login/hooks/use-auth'
+import React from 'react'
 
 export function MainHeader({ className }) {
   const { logout } = useAuth()
+
+  const [isloading, setIsloading] = React.useTransition()
+
+  function handleLogout() {
+    setIsloading(logout)
+  }
 
   return (
     <header
@@ -17,7 +24,12 @@ export function MainHeader({ className }) {
       <Container className={'flex items-center justify-between'}>
         <Text variant="heading-medium">Edge Library</Text>
         <div className="flex items-center gap-2">
-          <Button variant="secondary" onClick={logout}>
+          <Button
+            variant="secondary"
+            handling={isloading}
+            disabled={isloading}
+            onClick={handleLogout}
+          >
             Sair
           </Button>
         </div>

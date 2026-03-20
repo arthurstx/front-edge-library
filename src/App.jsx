@@ -9,6 +9,7 @@ import { ProtectedRoute } from './components/protected-route'
 import { LayoutMain } from './pages/layout/layout-main'
 import { Home } from './pages/home'
 import { Redirect } from './pages/redirect'
+import { PublicRoute } from './components/public-route'
 
 const queryClient = new QueryClient()
 
@@ -20,10 +21,12 @@ function App() {
         <BrowserRouter>
           <Routes>
             <Route path="redirect" element={<Redirect />} />
-            {/* Públicas */}
-            <Route path="/" element={<Login />} />
-            <Route path="auth/register" element={<Register />} />
 
+            {/* Públicas */}
+            <Route element={<PublicRoute />}>
+              <Route path="/" element={<Login />} />
+              <Route path="auth/register" element={<Register />} />
+            </Route>
             {/* Admin */}
             <Route element={<ProtectedRoute allowedRoles={['admin']} />}>
               <Route element={<LayoutMain />}>

@@ -1,5 +1,7 @@
 import { Navigate, Outlet } from 'react-router'
 import { useMe } from '../contexts/auth/login/hooks/use-me'
+import Spinner from '../assets/spinner.svg?react'
+import Icon from './icon'
 
 /**
  * @typedef {Object} ProtectedRouteProps
@@ -14,7 +16,12 @@ import { useMe } from '../contexts/auth/login/hooks/use-me'
 export function ProtectedRoute({ allowedRoles, redirectTo = '/' }) {
   const { user, isLoading } = useMe()
 
-  if (isLoading) return <div className="text-white text-4xl">Carregando...</div>
+  if (isLoading)
+    return (
+      <div className="flex h-screen w-full items-center justify-center">
+        <Icon animate={true} svg={Spinner} className=" size-30 fill-white" />
+      </div>
+    )
 
   if (!user) return <Navigate to={redirectTo} replace />
 

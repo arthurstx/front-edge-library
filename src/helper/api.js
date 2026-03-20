@@ -92,7 +92,6 @@ async function request(
       if (!newToken) {
         processQueue(new Error('Session expired'))
         tokenStore.clear()
-        window.location.href = '/'
         return { data: null, error: 'Session expired', status: 401 }
       }
 
