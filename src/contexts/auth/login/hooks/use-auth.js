@@ -2,10 +2,12 @@ import { api } from '../../../../helper/api'
 import { toast } from 'sonner'
 import { tokenStore } from '../../../../helper/auth'
 import { useNavigate } from 'react-router'
+import { useQueryClient } from '@tanstack/react-query'
 
-export function useLogin() {
-  const { set } = tokenStore
+export function useAuth() {
+  const { set, get, clear } = tokenStore
   const navigate = useNavigate()
+  const queryClient = useQueryClient()
   async function authentication(data) {
     const response = await api.post(
       '/auth/login',
@@ -28,6 +30,17 @@ export function useLogin() {
     }
   }
 
+  async function logout() {
+    await api.post('/auth/logout', null, {
+      credentials: 'include',
+      token: get(),
+    })
+    clear()
+    queryClient.removeQueries({ queryKey: ['me'] })
+    toast.success('Logout successful')
+    navigate('/')
+  }
+
   async function refreshToken() {
     const response = await api.post('/auth/refresh', null, {
       credentials: 'include',
@@ -38,5 +51,5 @@ export function useLogin() {
     }
   }
 
-  return { authentication, refreshToken }
+  return { authentication, refreshToken, logout }
 }

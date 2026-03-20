@@ -7,7 +7,6 @@ import { BookTable } from '../contexts/dashboard/components/book-table'
 export function Dashboard() {
   return (
     <>
-      <MainHeader />
       <Container className={'space-y-4'}>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4 pt-5">
           <StatCard variant="purple" label="Total Users" value={1000} />

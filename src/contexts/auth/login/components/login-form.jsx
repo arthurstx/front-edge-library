@@ -4,7 +4,7 @@ import { InputField } from '../../components/input-field'
 import React from 'react'
 import { loginFormSchema } from '../models/schemas'
 import { Button } from '../../../../components/button'
-import { useLogin } from '../hooks/use-login'
+import { useAuth } from '../hooks/use-auth'
 import { Link } from 'react-router'
 
 /**
@@ -13,7 +13,7 @@ import { Link } from 'react-router'
  */
 
 export function LoginForm() {
-  const { authentication } = useLogin()
+  const { authentication } = useAuth()
   const [isLoading, setIsLoading] = React.useTransition(false)
   const form = useForm({
     resolver: zodResolver(loginFormSchema),

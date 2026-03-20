@@ -2,8 +2,11 @@ import { twMerge } from 'tailwind-merge'
 import { Container } from './container'
 import { Button } from '../components/button'
 import { Text } from '../components/text'
+import { useAuth } from '../contexts/auth/login/hooks/use-auth'
 
 export function MainHeader({ className }) {
+  const { logout } = useAuth()
+
   return (
     <header
       className={twMerge(
@@ -14,7 +17,9 @@ export function MainHeader({ className }) {
       <Container className={'flex items-center justify-between'}>
         <Text variant="heading-medium">Edge Library</Text>
         <div className="flex items-center gap-2">
-          <Button variant="secondary">Sair</Button>
+          <Button variant="secondary" onClick={logout}>
+            Sair
+          </Button>
         </div>
       </Container>
     </header>
