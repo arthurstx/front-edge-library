@@ -7,6 +7,8 @@ import { Dashboard } from './pages/dashboard'
 import { NuqsAdapter } from 'nuqs/adapters/react-router/v7'
 import { ProtectedRoute } from './components/protected-route'
 import { LayoutMain } from './pages/layout/layout-main'
+import { Home } from './pages/home'
+import { Redirect } from './pages/redirect'
 
 const queryClient = new QueryClient()
 
@@ -17,6 +19,7 @@ function App() {
         <Toaster position="bottom-center" />
         <BrowserRouter>
           <Routes>
+            <Route path="redirect" element={<Redirect />} />
             {/* Públicas */}
             <Route path="/" element={<Login />} />
             <Route path="auth/register" element={<Register />} />
@@ -28,10 +31,12 @@ function App() {
               </Route>
             </Route>
 
-            {/* Member (quando criar) */}
-            {/* <Route element={<ProtectedRoute allowedRoles={['member']} />}>
-              <Route path="home" element={<Home />} />
-            </Route> */}
+            {/* User */}
+            <Route element={<ProtectedRoute allowedRoles={['user']} />}>
+              <Route element={<LayoutMain />}>
+                <Route path="home" element={<Home />} />
+              </Route>
+            </Route>
 
             <Route path="unauthorized" element={<div>Sem permissão.</div>} />
           </Routes>

@@ -11,10 +11,10 @@ import { useMe } from '../contexts/auth/login/hooks/use-me'
  * @param {ProtectedRouteProps} props
  * @returns {JSX.Element}
  */
-export function ProtectedRoute({ allowedRoles, redirectTo = '/login' }) {
+export function ProtectedRoute({ allowedRoles, redirectTo = '/' }) {
   const { user, isLoading } = useMe()
 
-  if (isLoading) return <div>Carregando...</div>
+  if (isLoading) return <div className="text-white text-4xl">Carregando...</div>
 
   if (!user) return <Navigate to={redirectTo} replace />
 

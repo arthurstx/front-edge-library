@@ -20,14 +20,16 @@ export function useAuth() {
       },
     )
     const { error } = response
+
     if (error) {
       toast.error(error.message || 'Error signing in. Please try again.')
-    } else if (response.status === 200) {
-      const { token } = response.data
-      set(token)
-      toast.success('Login successful')
-      navigate('/dashboard')
+      return
     }
+    const { token } = response.data
+    set(token)
+    queryClient.invalidateQueries({ queryKey: ['me'] })
+    navigate('/redirect')
+    toast.success('Login successful')
   }
 
   async function logout() {
@@ -37,6 +39,7 @@ export function useAuth() {
     })
     clear()
     queryClient.removeQueries({ queryKey: ['me'] })
+    queryClient.invalidateQueries({ queryKey: ['me'] })
     toast.success('Logout successful')
     navigate('/')
   }
