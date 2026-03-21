@@ -9,9 +9,14 @@ export function Dashboard() {
     <>
       <Container className={'space-y-4'}>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4 pt-5">
-          <StatCard variant="purple" label="Total Users" value={1000} />
-          <StatCard variant="orange" label="Total Users" value={1000} />
-          <StatCard variant="blue" label="Total Users" value={1000} />
+          <StatCard variant="default" label="Total Users" value={1284} />
+          <StatCard
+            variant="default"
+            accent={true}
+            label="Active Rentals"
+            value={43}
+          />
+          <StatCard variant="default" label="Active Users" value={820} />
         </div>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 ">
           <BookForm />

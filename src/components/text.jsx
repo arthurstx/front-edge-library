@@ -1,5 +1,6 @@
 import React from 'react'
-import { cva, cx } from 'class-variance-authority'
+import { cva } from 'class-variance-authority'
+import { twMerge } from 'tailwind-merge'
 
 const textVariants = cva('font-sans text-white', {
   variants: {
@@ -14,6 +15,7 @@ const textVariants = cva('font-sans text-white', {
 
       'label-medium': 'text-base leading-[150%] font-semibold',
       'label-small': 'text-xs leading-[150%] font-semibold',
+      'label-xsmall': 'text-[10px] leading-[150%] font-semibold',
     },
   },
   defaultVariants: {
@@ -34,7 +36,7 @@ export function Text({
 }) {
   return (
     <Component
-      className={cx(
+      className={twMerge(
         textVariants({
           variant,
         }),

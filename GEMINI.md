@@ -50,14 +50,17 @@ const buttonVariants = cva('base-classes', {
 ### Component
 
 - Always use **named exports** (`export function Foo`, never `export default`)
-- Apply `className` via `cx(variants({ prop }), className)` — never pass `className` into `cva` directly
+- Apply `className` via `twMerge(variants({ prop }), className)` — never pass `className` into `cva` directly
 - Spread `...props` onto the root element
 - Use native HTML elements where possible (e.g. `<div>`, `<span>`, `<button>`)
 
 ```tsx
 export function Badge({ variant, size, className, children, ...props }) {
   return (
-    <div className={cx(badgeVariants({ variant, size }), className)} {...props}>
+    <div
+      className={twMerge(badgeVariants({ variant, size }), className)}
+      {...props}
+    >
       <span className={badgeTextVariants({ size })}>{children}</span>
     </div>
   )
@@ -115,9 +118,10 @@ export function Skeleton({ rounded, className, ...props }) { ... }
 
 | Rule              | Detail                                               |
 | ----------------- | ---------------------------------------------------- |
-| Styling library   | `cva` + `cx` from `class-variance-authority`         |
+| Styling library   | `cx` from `class-variance-authority`                 |
+| Styling library   | `twMerge` from `tailwind-merge`                      |
 | Exports           | Named only (`export function`)                       |
-| `className`       | Always via `cx(variants({...}), className)`          |
+| `className`       | Always via `twMerge(variants({...}), className)`     |
 | `*Variants` const | Never exported                                       |
 | Typing strategy   | `.d.ts` for complex, JSDoc for simple                |
 | `.d.ts` variants  | Inline union types, never `VariantProps<typeof ...>` |

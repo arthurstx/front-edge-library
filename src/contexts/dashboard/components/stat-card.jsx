@@ -7,6 +7,7 @@ const statCardVariants = cva('flex flex-col gap-2 rounded-xl border p-5', {
       purple: 'bg-[#8a5dd4] ',
       orange: 'bg-[#dd474a] ',
       blue: 'bg-[#0ec399] ',
+      default: 'bg-zinc-900 border-zinc-700 shadow-md shadow-zinc-700/50',
     },
   },
   defaultVariants: {
@@ -17,8 +18,8 @@ const statCardVariants = cva('flex flex-col gap-2 rounded-xl border p-5', {
 const statCardValueVariants = cva('font-semibold leading-none', {
   variants: {
     accent: {
-      false: 'text-white',
-      true: 'text-blue-600',
+      false: 'text-zinc-100',
+      true: 'text-shadow-blue-400 text-shadow-2xs text-blue-500',
     },
     size: {
       sm: 'text-2xl',
@@ -44,7 +45,9 @@ export function StatCard({
 }) {
   return (
     <div className={cx(statCardVariants({ variant }), className)}>
-      <Text variant="label-medium">{label}</Text>
+      <Text className={'text-zinc-200'} variant="label-medium">
+        {label}
+      </Text>
       <span className={statCardValueVariants({ accent, size })}>
         {typeof value === 'number' ? value.toLocaleString('pt-BR') : value}
       </span>
