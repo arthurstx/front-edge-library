@@ -1,5 +1,4 @@
 import { Skeleton } from '../../../components/skeleton'
-import { Badge } from '../../../components/badge'
 
 export function BookTableRowSkeleton() {
   return (
@@ -17,7 +16,7 @@ export function BookTableRowSkeleton() {
       </td>
 
       <td className="py-4 px-4">
-        <Badge loading />
+        <Skeleton className="w-24 h-8" rounded="full" />
       </td>
 
       <td className="py-4 px-4 text-right">

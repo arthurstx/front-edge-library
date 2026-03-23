@@ -12,6 +12,10 @@ import { EditBookDialog } from './edit-book-dialog'
  * @param {{ book: Book, onAddStock?: (data: { bookId: string, quantity: number }) => void, onDelete?: (id: string) => void, onEditBook?: (data: Book) => void }} props
  */
 export function BookTableRow({ book, onAddStock, onDelete, onEditBook }) {
+  const quantity = book.total_copies
+  const badgeVariant = quantity === 0 ? 'danger' : quantity <= 5 ? 'warning' : 'success'
+  const badgeLabel = quantity === 0 ? 'Sem estoque' : `${quantity} unidades`
+
   return (
     <tr className="border-t bg-zinc-700 border-zinc-600 hover:bg-zinc-600 transition">
       <td className="py-4 px-4 text-sm text-white font-medium">{book.title}</td>
@@ -21,7 +25,7 @@ export function BookTableRow({ book, onAddStock, onDelete, onEditBook }) {
       <td className="py-4 px-4 text-sm text-white">{book.category}</td>
 
       <td className="py-4 px-4">
-        <Badge quantity={book.total_copies} />
+        <Badge variant={badgeVariant}>{badgeLabel}</Badge>
       </td>
 
       <td className="py-4 px-4 text-right">

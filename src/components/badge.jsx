@@ -1,35 +1,33 @@
-import { cva, cx } from 'class-variance-authority'
-import { Skeleton } from './skeleton'
-import Icon from './icon'
-import Dot from '../assets/dot.svg?react'
+import { cva } from 'class-variance-authority'
+import { twMerge } from 'tailwind-merge'
 
-const stockBadgeVariants = cva(
-  'inline-flex items-center justify-center rounded-full px-2.5 py-0.5 text-sm font-base relative',
+const badgeVariants = cva(
+  'inline-flex items-center justify-center rounded-full px-2.5 py-0.5 text-sm font-base relative border',
   {
     variants: {
-      level: {
-        high: 'bg-green-500/25 border border-green-500 text-white',
-        low: 'bg-yellow-500/25 border border-yellow-500 text-white',
-        out: 'bg-red-500/25 border border-red-500 text-white',
+      variant: {
+        success: 'bg-green-500/25 border-green-500 text-white',
+        warning: 'bg-yellow-500/25 border-yellow-500 text-white',
+        danger: 'bg-red-500/25 border-red-500 text-white',
       },
     },
-    defaultVariants: { level: 'high' },
+    defaultVariants: {
+      variant: 'success',
+    },
   },
 )
 
 /**
- * @param {{ quantity: number, loading?: boolean, className?: string }} props
+ * Nota: Sempre quando for usar esse componente, a lógica da troca de cores
+ * tem que ficar sob responsabilidade do componente que estiver importando ele.
+ * Não coloque regras de negócio internamente.
+ * 
+ * @param {{ variant?: 'success' | 'warning' | 'danger', className?: string, children?: import('react').ReactNode } & import('react').ComponentProps<'span'>} props
  */
-export function Badge({ quantity, loading, className }) {
-  if (loading)
-    return <Skeleton className={cx('w-24 h-8', className)} rounded="full" />
-
-  const level = quantity === 0 ? 'out' : quantity <= 5 ? 'low' : 'high'
-  const label = quantity === 0 ? 'Sem estoque' : `${quantity} unidades`
-
+export function Badge({ variant, className, children, ...props }) {
   return (
-    <span className={cx(stockBadgeVariants({ level }), className)}>
-      {label}
+    <span className={twMerge(badgeVariants({ variant }), className)} {...props}>
+      {children}
     </span>
   )
 }

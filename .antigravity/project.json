@@ -1,0 +1,8 @@
+{
+  "name": "front-edge-library",
+  "language": "javascript",
+  "framework": "react",
+  "testCommand": "npm test",
+  "buildCommand": "npm run build",
+  "devServer": "npm run dev"
+}

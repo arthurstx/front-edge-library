@@ -19,7 +19,6 @@ export function useRental() {
         return book
       })
     })
-    console.log(data)
     const response = await api.post('/rental', data, { token: get() })
     if (response.error) {
       queryClient.setQueryData(['books'], previousBooks)
