@@ -16,46 +16,13 @@ import {
   RentalHistoryRow,
 } from '../contexts/rentals/components/rental-history-table'
 import { Badge } from '../components/badge'
+import { useRentalsActive } from '../contexts/rentals/hooks/use-rentals-active'
+import { Skeleton } from '../components/skeleton'
+import { useRentalsHistory } from '../contexts/rentals/hooks/use-rentals-history'
 
 export function Home() {
-  const activeRentalsMock = [
-    {
-      id: '1',
-      book: {
-        title: 'O Senhor dos Anéis',
-        author: 'J.R.R. Tolkien',
-        genre: 'Fantasia',
-        coverUrl: '',
-      },
-      status: 'rented',
-      start_date: '2026-03-10T10:00:00.000Z',
-      end_date: '2026-03-24T10:00:00.000Z',
-    },
-    {
-      id: '2',
-      book: {
-        title: 'Duna',
-        author: 'Frank Herbert',
-        genre: 'Ficção Científica',
-        coverUrl: '',
-      },
-      status: 'rented',
-      start_date: '2026-03-15T10:00:00.000Z',
-      end_date: '2026-03-30T10:00:00.000Z',
-    },
-    {
-      id: '3',
-      book: {
-        title: '1984',
-        author: 'George Orwell',
-        genre: 'Distopia',
-        coverUrl: '',
-      },
-      status: 'returned',
-      start_date: '2026-03-01T10:00:00.000Z',
-      end_date: '2026-03-15T10:00:00.000Z',
-    },
-  ]
+  const { activeRentals, isLoading } = useRentalsActive()
+  const { rentals, isLoadingRentals } = useRentalsHistory()
 
   const formatIsoDate = (isoStr) => {
     return new Intl.DateTimeFormat('pt-BR', {
@@ -68,43 +35,7 @@ export function Home() {
   /**
    * @type {import('../rental-history-table/types/rental-history-table').RentalHistoryItem[]}
    */
-  const rentalHistoryMock = [
-    {
-      id: '1',
-      title: '1984',
-      author: 'George Orwell',
-      returnDate: '05 Mar 2026',
-      status: 'returned',
-    },
-    {
-      id: '2',
-      title: 'Duna',
-      author: 'Frank Herbert',
-      returnDate: '18 Fev 2026',
-      status: 'returned',
-    },
-    {
-      id: '3',
-      title: 'Dom Casmurro',
-      author: 'Machado de Assis',
-      returnDate: '02 Jan 2026',
-      status: 'returned',
-    },
-    {
-      id: '4',
-      title: 'Fundação',
-      author: 'Isaac Asimov',
-      returnDate: '10 Dez 2025',
-      status: 'overdue',
-    },
-    {
-      id: '5',
-      title: 'O Hobbit',
-      author: 'J.R.R. Tolkien',
-      returnDate: '28 Nov 2025',
-      status: 'returned',
-    },
-  ]
+
   return (
     <Container className={'space-y-8 py-5'}>
       <div className={'flex flex-col gap-2 pt-8'}>
@@ -127,34 +58,40 @@ export function Home() {
         <Text className="text-zinc-400">GET /rentals/active</Text>
       </div>
       <div className="flex flex-col gap-2.5">
-        {activeRentalsMock.map((rental) => (
-          <ActiveRentalCard key={rental.id}>
-            <ActiveRentalCover
-              coverUrl={rental.book.coverUrl}
-              title={rental.book.title}
-            />
-            <ActiveRentalContent>
-              <ActiveRentalInfo
-                title={rental.book.title}
-                author={rental.book.author}
-                genre={rental.book.genre}
-              />
-              <ActiveRentalMeta>
-                <ActiveRentalDate
-                  label="Retirada"
-                  value={formatIsoDate(rental.start_date)}
+        {isLoading &&
+          Array.from({ length: 2 }).map((_, index) => (
+            <Skeleton key={index} className="w-full h-20" />
+          ))}
+        {!isLoading && activeRentals.length === 0 && (
+          <Text className="text-center" variant="paragraph-medium">
+            Nenhum aluguel ativo
+          </Text>
+        )}
+        {!isLoading &&
+          activeRentals.length > 0 &&
+          activeRentals.map((rental) => (
+            <ActiveRentalCard key={rental.id}>
+              <ActiveRentalCover title={rental.book.title} />
+              <ActiveRentalContent>
+                <ActiveRentalInfo
+                  title={rental.book.title}
+                  author={rental.book.author}
+                  genre={rental.book.category}
                 />
-                <ActiveRentalDate
-                  label="Devolução"
-                  value={formatIsoDate(rental.end_date)}
-                />
-                <ActiveRentalStatus
-                  endDate={rental.end_date}
-                />
-              </ActiveRentalMeta>
-            </ActiveRentalContent>
-          </ActiveRentalCard>
-        ))}
+                <ActiveRentalMeta>
+                  <ActiveRentalDate
+                    label="Retirada"
+                    value={formatIsoDate(rental.startDate)}
+                  />
+                  <ActiveRentalDate
+                    label="Devolução"
+                    value={formatIsoDate(rental.endDate)}
+                  />
+                  <ActiveRentalStatus endDate={rental.endDate} />
+                </ActiveRentalMeta>
+              </ActiveRentalContent>
+            </ActiveRentalCard>
+          ))}
       </div>
       <div className="flex items-baseline justify-between gap-2 mb-2 w-full px-3">
         <Text className="" variant="label-medium">
@@ -164,28 +101,47 @@ export function Home() {
       </div>
       <RentalHistoryTable>
         <RentalHistoryHeader />
-        {rentalHistoryMock.map((item) => (
-          <RentalHistoryRow key={item.id}>
-            <div className="flex flex-col gap-0.5 min-w-0">
-              <Text variant="heading-small" as="p" className="truncate">
-                {item.title}
-              </Text>
-              <Text
-                variant="paragraph-small"
-                as="p"
-                className="text-zinc-500 truncate"
+        {isLoadingRentals &&
+          Array.from({ length: 2 }).map((_, index) => (
+            <Skeleton key={index} className="w-full h-20" />
+          ))}
+        {!isLoadingRentals && rentals.length === 0 && (
+          <Text className="text-center" variant="paragraph-medium">
+            Nenhum aluguel no histórico
+          </Text>
+        )}
+        {!isLoadingRentals &&
+          rentals.length > 0 &&
+          rentals.map((item) => (
+            <RentalHistoryRow key={item.id}>
+              <div className="flex flex-col gap-0.5 min-w-0">
+                <Text variant="heading-small" as="p" className="truncate">
+                  {item.book.title}
+                </Text>
+                <Text
+                  variant="paragraph-small"
+                  as="p"
+                  className="text-zinc-500 truncate"
+                >
+                  {item.book.author}
+                </Text>
+              </div>
+              {
+                <Text
+                  variant="paragraph-small"
+                  as="span"
+                  className="text-zinc-300"
+                >
+                  18 Fev 2026
+                </Text>
+              }
+              <Badge
+                variant={item.status === 'returned' ? 'success' : 'danger'}
               >
-                {item.author}
-              </Text>
-            </div>
-            <Text variant="paragraph-small" as="span" className="text-zinc-300">
-              {item.returnDate}
-            </Text>
-            <Badge variant={item.status === 'returned' ? 'success' : 'danger'}>
-              {item.status === 'returned' ? 'Devolvido' : 'Atrasado'}
-            </Badge>
-          </RentalHistoryRow>
-        ))}
+                {item.status === 'returned' ? 'Devolvido' : 'Atrasado'}
+              </Badge>
+            </RentalHistoryRow>
+          ))}
       </RentalHistoryTable>
     </Container>
   )

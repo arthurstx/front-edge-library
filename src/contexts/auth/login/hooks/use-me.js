@@ -24,7 +24,6 @@ export function useMe() {
     staleTime: 1000 * 60 * 5,
     gcTime: 1000 * 60 * 10,
   })
-  console.log(user)
 
   return { user, isLoading }
 }
