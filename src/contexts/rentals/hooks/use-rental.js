@@ -20,6 +20,7 @@ export function useRental() {
       })
     })
     const response = await api.post('/rental', data, { token: get() })
+    queryClient.invalidateQueries(['rentals'])
     if (response.error) {
       queryClient.setQueryData(['books'], previousBooks)
       queryClient.invalidateQueries(['books'])
