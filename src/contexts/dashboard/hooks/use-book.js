@@ -23,7 +23,7 @@ export function useBook() {
 
     toast.success('Book added successfully')
     queryClient.invalidateQueries(['books'])
-    queryClient.setQueriesData(['books'], (oldData) => {
+    queryClient.setQueryData(['books'], (oldData) => {
       if (!oldData) return oldData
       return [...oldData, respose.data.book]
     })

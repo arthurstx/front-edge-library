@@ -16,7 +16,7 @@ export function useRentalsActive() {
   const { data, isLoading } = useQuery({
     queryKey: ['rentals-active'],
     queryFn: async () => {
-      const response = await api.get('/rental/active', null, {
+      const response = await api.get('/rental/active', {
         token: get(),
       })
 

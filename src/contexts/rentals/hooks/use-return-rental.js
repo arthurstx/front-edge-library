@@ -5,20 +5,30 @@ import { tokenStore } from '../../../helper/auth'
 
 export function useReturnRental() {
   const queryClient = useQueryClient()
-
   return useMutation({
-    mutationFn: async (rentalId) => {
-      const { data, error } = await api.patch(`/rental/${rentalId}/return`, null, {
-        token: tokenStore.get(),
-      })
+    mutationFn: async ({ id: rentalId, userId }) => {
+      const { data, error } = await api.patch(
+        `/rental/${rentalId}/return`,
+        { userId },
+        {
+          token: tokenStore.get(),
+        },
+      )
       if (error) throw new Error(error)
       return data
     },
     onSuccess: () => {
       toast.success('Livro devolvido com sucesso')
-      queryClient.invalidateQueries({ queryKey: ['rentals'] })
-      queryClient.invalidateQueries({ queryKey: ['rentals-active'] })
-      queryClient.invalidateQueries({ queryKey: ['rentals-history'] })
+
+      queryClient.invalidateQueries({ queryKey: ['rentals'], exact: false })
+      queryClient.invalidateQueries({
+        queryKey: ['rentals-active'],
+        exact: false,
+      })
+      queryClient.invalidateQueries({
+        queryKey: ['rentals-history'],
+        exact: false,
+      })
     },
     onError: (error) => {
       toast.error(error.message || 'Falha ao devolver o livro')

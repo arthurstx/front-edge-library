@@ -2,6 +2,7 @@ import { useQueryState, createSerializer, parseAsString } from 'nuqs'
 import { useQuery } from '@tanstack/react-query'
 import { api } from '../../../helper/api'
 import { toast } from 'sonner'
+import { tokenStore } from '../../../helper/auth'
 
 export function useRentalsHistory() {
   const toSearchParams = createSerializer({
@@ -14,6 +15,9 @@ export function useRentalsHistory() {
     queryFn: async () => {
       const response = await api.get(
         `/rental/history${toSearchParams({ page: 1 })}`,
+        {
+          token: tokenStore.get(),
+        },
       )
 
       if (response.error) {

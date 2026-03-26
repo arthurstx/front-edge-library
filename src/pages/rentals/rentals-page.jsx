@@ -25,7 +25,9 @@ export function RentalsPage() {
   const { rentals, isLoading, error, filters } = useRentals()
   const { mutate: returnRental, isPending } = useReturnRental()
   const [inputValue, setInputValue] = React.useState('')
+
   console.log(rentals)
+
   const debouncedSetValue = React.useRef(
     debounce((value) => filters.setQuery(value), 400),
   ).current
@@ -91,15 +93,17 @@ export function RentalsPage() {
             <ActiveRentalCard key={rental.id}>
               <ActiveRentalCover title={rental.book.title} />
               <ActiveRentalContent>
-                <ActiveRentalInfo
-                  title={rental.book.title}
-                  author={rental.book.author}
-                  genre={rental.book.category || 'N/A'}
-                />
-                <ActiveRentalUser
-                  id={rental.user.userId}
-                  name={rental.user.name}
-                />
+                <div className="flex justify-between">
+                  <ActiveRentalInfo
+                    title={rental.book.title}
+                    author={rental.book.author}
+                    genre={rental.book.category || 'N/A'}
+                  />
+                  <ActiveRentalUser
+                    id={rental.user.userId}
+                    name={rental.user.name}
+                  />
+                </div>
                 <ActiveRentalMeta>
                   <ActiveRentalDate
                     label="Retirada"
@@ -115,7 +119,12 @@ export function RentalsPage() {
                   <Button
                     variant="primary"
                     full
-                    onClick={() => returnRental(rental.id)}
+                    onClick={() =>
+                      returnRental({
+                        id: rental.id,
+                        userId: rental.user.userId,
+                      })
+                    }
                     handling={isPending}
                   >
                     Devolver Livro

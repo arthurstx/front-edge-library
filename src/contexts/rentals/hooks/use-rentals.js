@@ -18,9 +18,10 @@ export function useRentals() {
     queryKey: ['rentals', page, query],
     queryFn: async () => {
       const response = await api.get(
-        `/rental${toSearchParams({ page, query })}`, // page dinâmico
-        null,
-        { token: tokenStore.get() },
+        `/rental${toSearchParams({ page, query })}`,
+        {
+          token: tokenStore.get(),
+        },
       )
       if (response.error) throw new Error(response.error)
       return response.data.rentals
