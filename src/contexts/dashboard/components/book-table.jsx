@@ -28,7 +28,7 @@ export function BookTable({
 }) {
   const [inputValue, setInputValue] = React.useState('')
 
-  const { books, isLoadingBooks = true } = useBooks()
+  const { books, isLoadingBooks = true, filters: booksFilters } = useBooks()
   const { addStock, deleteBook, updateBook } = useBook()
   const {
     filters,
@@ -161,7 +161,7 @@ export function BookTable({
         <tbody>{renderTableBody()}</tbody>
       </table>
 
-      {!isSearching && totalPages > 1 && (
+      {!isSearching && books.length > 5 && (
         <Pagination
           currentPage={currentPage}
           totalPages={totalPages}

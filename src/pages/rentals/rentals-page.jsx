@@ -93,7 +93,7 @@ export function RentalsPage() {
             <ActiveRentalCard key={rental.id}>
               <ActiveRentalCover title={rental.book.title} />
               <ActiveRentalContent>
-                <div className="flex justify-between">
+                <div className="max-md:flex-col max-md:items-start gap-5 flex justify-between">
                   <ActiveRentalInfo
                     title={rental.book.title}
                     author={rental.book.author}

@@ -19,10 +19,13 @@ import { Badge } from '../components/badge'
 import { useRentalsActive } from '../contexts/rentals/hooks/use-rentals-active'
 import { Skeleton } from '../components/skeleton'
 import { useRentalsHistory } from '../contexts/rentals/hooks/use-rentals-history'
+import { useRentalsStatsTotal, useRentalsStatsActive } from '../contexts/rentals/hooks/use-rentals-stats'
 
 export function Home() {
   const { activeRentals, isLoading } = useRentalsActive()
   const { rentals, isLoadingRentals } = useRentalsHistory()
+  const { data: totalRentals, isLoading: isLoadingTotal } = useRentalsStatsTotal()
+  const { data: activeRentalsCount, isLoading: isLoadingActiveCount } = useRentalsStatsActive()
 
   const formatIsoDate = (isoStr) => {
     return new Intl.DateTimeFormat('pt-BR', {
@@ -48,8 +51,14 @@ export function Home() {
         </Text>
       </div>
       <div className={'grid md:grid-cols-2 gap-4 pt-5 max-w-200 mx-auto'}>
-        <StatCard label="Total rental" value={10} />
-        <StatCard label="Rental active" value={2} />
+        <StatCard 
+          label="Total rental" 
+          value={isLoadingTotal ? <Skeleton className="h-8 w-16" /> : totalRentals} 
+        />
+        <StatCard 
+          label="Rental active" 
+          value={isLoadingActiveCount ? <Skeleton className="h-8 w-16" /> : activeRentalsCount} 
+        />
       </div>
       <div className="flex items-baseline justify-between gap-2 mb-2 w-full px-3">
         <Text className="" variant="label-medium">
