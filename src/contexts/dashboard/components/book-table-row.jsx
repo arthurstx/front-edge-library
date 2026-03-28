@@ -55,7 +55,7 @@ export function BookTableRow({ book, onAddStock, onDelete, onEditBook }) {
             onConfirm={(data) => onEditBook?.({ ...data, id: book.id })}
           />
           <button
-            className="text-gray-400 hover:text-red-500 transition"
+            className="text-gray-400 border rounded-lg border-transparent hover:border-white p-2 cursor-pointer transition"
             onClick={() => onDelete?.(book.id)}
             aria-label="Excluir livro"
           >

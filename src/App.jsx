@@ -12,6 +12,7 @@ import { Home } from './pages/home'
 import { Redirect } from './pages/redirect'
 import { PublicRoute } from './components/public-route'
 import { RentalsPage } from './pages/rentals/rentals-page'
+import { UsersPage } from './pages/users-page'
 
 const queryClient = new QueryClient()
 
@@ -34,6 +35,7 @@ function App() {
               <Route element={<LayoutDashboard />}>
                 <Route path="dashboard" element={<Dashboard />} />
                 <Route path="dashboard/rentals" element={<RentalsPage />} />
+                <Route path="dashboard/users" element={<UsersPage />} />
               </Route>
             </Route>
 

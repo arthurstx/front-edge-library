@@ -4,10 +4,11 @@ import { api } from '../../../helper/api'
 import { toast } from 'sonner'
 import { tokenStore } from '../../../helper/auth'
 
+const LIMIT = 10
+
 export function useRentalsHistory() {
   const toSearchParams = createSerializer({
     page: parseAsString,
-    query: parseAsString,
   })
   const [page = 1, setPage] = useQueryState('page')
   const { data, isLoading } = useQuery({
@@ -30,6 +31,7 @@ export function useRentalsHistory() {
   return {
     rentals: data ?? [],
     isLoadingRentals: isLoading,
+    isLastPage: (data ?? []).length < LIMIT,
     filters: {
       page,
       setPage,

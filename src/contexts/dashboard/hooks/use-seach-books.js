@@ -3,6 +3,8 @@ import { useQuery } from '@tanstack/react-query'
 import { api } from '../../../helper/api'
 import { toast } from 'sonner'
 
+const LIMIT = 10
+
 export function useSearchBooks() {
   const toSearchParams = createSerializer({
     page: parseAsString,
@@ -27,6 +29,7 @@ export function useSearchBooks() {
   })
   return {
     books: data ?? [],
+    isLastPage: (data ?? []).length < LIMIT,
     isLoadingBooks: isLoading,
     filters: {
       page,

@@ -7,7 +7,7 @@ export function useRentalsStatsTotal() {
   const { data, isLoading } = useQuery({
     queryKey: ['rentals-stats-total'],
     queryFn: async () => {
-      const response = await api.get('/rentals/stats/total', { token: get() })
+      const response = await api.get('/rental/stats/total', { token: get() })
       if (response.error) return 0
       return response.data?.total ?? response.data?.count ?? response.data ?? 0
     },
@@ -21,7 +21,7 @@ export function useRentalsStatsActive() {
   const { data, isLoading } = useQuery({
     queryKey: ['rentals-stats-active'],
     queryFn: async () => {
-      const response = await api.get('/rentals/stats/active', { token: get() })
+      const response = await api.get('/rental/stats/active', { token: get() })
       if (response.error) return 0
       return response.data?.total ?? response.data?.count ?? response.data ?? 0
     },

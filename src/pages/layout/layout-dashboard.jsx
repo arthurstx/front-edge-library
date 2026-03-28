@@ -18,10 +18,12 @@ import Icon from '../../components/icon'
 import LayoutDashboardIcon from '../../assets/layout-dashboard.svg?react'
 import ClipboardListIcon from '../../assets/clipboard-list.svg?react'
 import MenuIcon from '../../assets/menu.svg?react'
+import UsersIcon from '../../assets/users.svg?react'
 
 const navItems = [
   { title: 'Home', href: '/dashboard', icon: LayoutDashboardIcon },
   { title: 'Aluguéis', href: '/dashboard/rentals', icon: ClipboardListIcon },
+  { title: 'Usuários', href: '/dashboard/users', icon: UsersIcon },
 ]
 
 function NavLinks({ pathname }) {

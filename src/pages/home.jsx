@@ -19,13 +19,18 @@ import { Badge } from '../components/badge'
 import { useRentalsActive } from '../contexts/rentals/hooks/use-rentals-active'
 import { Skeleton } from '../components/skeleton'
 import { useRentalsHistory } from '../contexts/rentals/hooks/use-rentals-history'
-import { useRentalsStatsTotal, useRentalsStatsActive } from '../contexts/rentals/hooks/use-rentals-stats'
+import {
+  useRentalsStatsTotal,
+  useRentalsStatsActive,
+} from '../contexts/rentals/hooks/use-rentals-stats'
 
 export function Home() {
   const { activeRentals, isLoading } = useRentalsActive()
-  const { rentals, isLoadingRentals } = useRentalsHistory()
-  const { data: totalRentals, isLoading: isLoadingTotal } = useRentalsStatsTotal()
-  const { data: activeRentalsCount, isLoading: isLoadingActiveCount } = useRentalsStatsActive()
+  const { rentals, isLoadingRentals, filters, isLastPage } = useRentalsHistory()
+  const { data: totalRentals, isLoading: isLoadingTotal } =
+    useRentalsStatsTotal()
+  const { data: activeRentalsCount, isLoading: isLoadingActiveCount } =
+    useRentalsStatsActive()
 
   const formatIsoDate = (isoStr) => {
     return new Intl.DateTimeFormat('pt-BR', {
@@ -33,6 +38,10 @@ export function Home() {
       month: 'short',
       year: 'numeric',
     }).format(new Date(isoStr))
+  }
+
+  function handlePageChange(newPage) {
+    filters.setPage(newPage)
   }
 
   /**
@@ -51,13 +60,21 @@ export function Home() {
         </Text>
       </div>
       <div className={'grid md:grid-cols-2 gap-4 pt-5 max-w-200 mx-auto'}>
-        <StatCard 
-          label="Total rental" 
-          value={isLoadingTotal ? <Skeleton className="h-8 w-16" /> : totalRentals} 
+        <StatCard
+          label="Total rental"
+          value={
+            isLoadingTotal ? <Skeleton className="h-8 w-16" /> : totalRentals
+          }
         />
-        <StatCard 
-          label="Rental active" 
-          value={isLoadingActiveCount ? <Skeleton className="h-8 w-16" /> : activeRentalsCount} 
+        <StatCard
+          label="Rental active"
+          value={
+            isLoadingActiveCount ? (
+              <Skeleton className="h-8 w-16" />
+            ) : (
+              activeRentalsCount
+            )
+          }
         />
       </div>
       <div className="flex items-baseline justify-between gap-2 mb-2 w-full px-3">
@@ -152,6 +169,27 @@ export function Home() {
             </RentalHistoryRow>
           ))}
       </RentalHistoryTable>
+      {!isLoadingRentals && (
+        <div className="flex items-center justify-center gap-3 py-4 border-t border-zinc-700">
+          <button
+            disabled={Number(filters.page) <= 1}
+            onClick={() => handlePageChange(Number(filters.page) - 1)}
+            className="px-3 py-1 rounded border border-zinc-600 text-sm text-zinc-300 disabled:opacity-40 hover:bg-zinc-800 transition"
+          >
+            ← Anterior
+          </button>
+          <span className="text-sm text-zinc-400">
+            Página {Number(filters.page)}
+          </span>
+          <button
+            disabled={isLastPage}
+            onClick={() => handlePageChange(Number(filters.page) + 1)}
+            className="px-3 py-1 rounded border border-zinc-600 text-sm text-zinc-300 disabled:opacity-40 hover:bg-zinc-800 transition"
+          >
+            Próxima →
+          </button>
+        </div>
+      )}
     </Container>
   )
 }

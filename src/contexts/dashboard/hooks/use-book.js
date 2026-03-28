@@ -19,6 +19,7 @@ export function useBook() {
     )
     if (respose.error) {
       toast.error(respose.error.message || 'add book failed')
+      return
     }
 
     toast.success('Book added successfully')
@@ -90,19 +91,23 @@ export function useBook() {
   }
 
   async function deleteBook(id) {
-    const respose = await api.delete(`/book/delete/${id}`, {
+    const respose = await api.delete(`/book/${id}`, {
       token: get(),
     })
     if (respose.error) {
       toast.error(respose.error.message || 'delete book failed')
+      return
     }
 
+    queryClient.setQueriesData(
+      { queryKey: ['books'], exact: false },
+      (oldData) => {
+        if (!Array.isArray(oldData)) return oldData
+        return oldData.filter((book) => book.id !== id)
+      },
+    )
+
     toast.success('Book deleted successfully')
-    queryClient.setQueriesData(['books'], (oldData) => {
-      if (!oldData) return oldData
-      return oldData.filter((book) => book.id !== id)
-    })
-    queryClient.invalidateQueries(['books'])
   }
 
   return {

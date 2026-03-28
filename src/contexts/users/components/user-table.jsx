@@ -1,31 +1,23 @@
 import { cx } from 'class-variance-authority'
 import { Text } from '../../../components/text'
 import { InputField } from '../../auth/components/input-field'
-import { BookTableRow } from './book-table-row'
-import { BookTableRowSkeleton } from './book-table-row-skeleton'
-import { useBooks } from '../hooks/use-books'
-import { useSearchBooks } from '../hooks/use-seach-books'
-import { useBook } from '../hooks/use-book'
+import { UserTableRow } from './user-table-row'
+import { UserTableRowSkeleton } from './user-table-row-skeleton'
+import { useUsers } from '../hooks/use-users'
 import { debounce } from '../../../helper/debouce'
 import { Pagination } from '../../../components/pagination'
 import React from 'react'
 
-const COLUMNS = ['Title', 'Author', 'Category', 'Stock', 'Actions']
+const COLUMNS = ['Name', 'Email', 'Role', 'Actions']
 
-export function BookTable({ className }) {
+export function UserTable({ className }) {
   const [inputValue, setInputValue] = React.useState('')
   const {
-    books,
-    isLoadingBooks = true,
+    users,
+    isLoadingUsers,
     isLastPage,
-    filters: booksFilters,
-  } = useBooks()
-  const { addStock, deleteBook, updateBook } = useBook()
-  const {
     filters,
-    books: searchBooks,
-    isLoadingBooks: isSearchLoading,
-  } = useSearchBooks()
+  } = useUsers()
 
   const isSearching =
     filters.query !== null &&
@@ -49,60 +41,28 @@ export function BookTable({ className }) {
   }
 
   function handlePageChange(newPage) {
-    booksFilters.setPage(newPage)
+    filters.setPage(newPage)
   }
 
   function renderTableBody() {
-    if (isSearching) {
-      if (isSearchLoading) {
-        return Array.from({ length: 4 }).map((_, index) => (
-          <BookTableRowSkeleton key={index} />
-        ))
-      }
-      if (searchBooks.length === 0) {
-        return (
-          <tr>
-            <td colSpan={5} className="py-10 text-center text-sm text-gray-400">
-              Nenhum resultado encontrado para "{inputValue}".
-            </td>
-          </tr>
-        )
-      }
-      return searchBooks.map((book) => (
-        <BookTableRow
-          key={book.id}
-          book={book}
-          onAddStock={addStock}
-          onDelete={deleteBook}
-          onEditBook={updateBook}
-        />
-      ))
-    }
-
-    if (isLoadingBooks) {
+    if (isLoadingUsers) {
       return Array.from({ length: 4 }).map((_, index) => (
-        <BookTableRowSkeleton key={index} />
+        <UserTableRowSkeleton key={index} />
       ))
     }
 
-    if (books.length === 0) {
+    if (users.length === 0) {
       return (
         <tr>
-          <td colSpan={5} className="py-10 text-center text-sm text-gray-400">
-            Nenhum livro encontrado.
+          <td colSpan={4} className="py-10 text-center text-sm text-gray-400">
+            Nenhum usuário encontrado{isSearching ? ` para "${inputValue}"` : ''}.
           </td>
         </tr>
       )
     }
 
-    return books.map((book) => (
-      <BookTableRow
-        key={book.id}
-        book={book}
-        onAddStock={addStock}
-        onDelete={deleteBook}
-        onEditBook={updateBook}
-      />
+    return users.map((user) => (
+      <UserTableRow key={user.id} user={user} />
     ))
   }
 
@@ -119,13 +79,13 @@ export function BookTable({ className }) {
           variant="label-small"
           className="text-white uppercase tracking-wider"
         >
-          Livros Recentes{' '}
+          Usuários do Sistema{' '}
           <span className="text-gray-200 font-normal normal-case tracking-normal">
-            (GET /book/list)
+            (GET /users)
           </span>
         </Text>
         <InputField
-          placeholder="Buscar..."
+          placeholder="Buscar (nome, email)..."
           value={inputValue}
           onChange={handleInputChange}
         />
@@ -150,9 +110,9 @@ export function BookTable({ className }) {
         <tbody>{renderTableBody()}</tbody>
       </table>
 
-      {!isSearching && (
+      {(filters.page > 1 || !isLastPage) && (
         <Pagination
-          page={Number(booksFilters.page)}
+          page={Number(filters.page)}
           isLastPage={isLastPage}
           onPageChange={handlePageChange}
         />
