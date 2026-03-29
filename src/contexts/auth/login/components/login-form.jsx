@@ -64,6 +64,11 @@ export function LoginForm() {
       >
         Don't have an account? Register
       </Link>
+      <div className="flex flex-col gap-1 mt-6 text-white">
+        <span className="mb-1">admin screen</span>
+        <span>admin@example.com</span>
+        <span>123456</span>
+      </div>
     </div>
   )
 }

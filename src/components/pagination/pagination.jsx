@@ -8,7 +8,13 @@ const paginationVariants = cva(
 /**
  * @param {{ page: number, isLastPage: boolean, onPageChange: (newPage: number) => void, className?: string }} props
  */
-export function Pagination({ page, isLastPage, onPageChange, className, ...props }) {
+export function Pagination({
+  page,
+  isLastPage,
+  onPageChange,
+  className,
+  ...props
+}) {
   return (
     <div className={twMerge(paginationVariants(), className)} {...props}>
       <button
@@ -16,15 +22,15 @@ export function Pagination({ page, isLastPage, onPageChange, className, ...props
         onClick={() => onPageChange(page - 1)}
         className="px-3 py-1 rounded border border-zinc-600 text-sm text-zinc-300 disabled:opacity-40 hover:bg-zinc-800 transition cursor-pointer"
       >
-        ← Anterior
+        ← Back
       </button>
-      <span className="text-sm text-zinc-400">Página {page}</span>
+      <span className="text-sm text-zinc-400">Page {page}</span>
       <button
         disabled={isLastPage}
         onClick={() => onPageChange(page + 1)}
         className="px-3 py-1 rounded border border-zinc-600 text-sm text-zinc-300 disabled:opacity-40 hover:bg-zinc-800 transition cursor-pointer"
       >
-        Próxima →
+        Next →
       </button>
     </div>
   )

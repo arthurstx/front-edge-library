@@ -63,7 +63,7 @@ export function BookTable({ className }) {
         return (
           <tr>
             <td colSpan={5} className="py-10 text-center text-sm text-gray-400">
-              Nenhum resultado encontrado para "{inputValue}".
+              No results found for "{inputValue}".
             </td>
           </tr>
         )
@@ -89,7 +89,7 @@ export function BookTable({ className }) {
       return (
         <tr>
           <td colSpan={5} className="py-10 text-center text-sm text-gray-400">
-            Nenhum livro encontrado.
+            No books found.
           </td>
         </tr>
       )
@@ -119,7 +119,7 @@ export function BookTable({ className }) {
           variant="label-small"
           className="text-white uppercase tracking-wider"
         >
-          Livros Recentes{' '}
+          Recent Books{' '}
           <span className="text-gray-200 font-normal normal-case tracking-normal">
             (GET /book/list)
           </span>

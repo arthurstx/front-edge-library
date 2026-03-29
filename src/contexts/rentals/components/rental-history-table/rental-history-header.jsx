@@ -8,14 +8,14 @@ export function RentalHistoryHeader() {
         as="span"
         className="text-zinc-500 uppercase tracking-wider"
       >
-        Livro
+        Book
       </Text>
       <Text
         variant="label-small"
         as="span"
         className="text-zinc-500 uppercase tracking-wider"
       >
-        Devolução
+        Return Date
       </Text>
       <Text
         variant="label-small"

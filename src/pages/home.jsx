@@ -106,11 +106,11 @@ export function Home() {
                 />
                 <ActiveRentalMeta>
                   <ActiveRentalDate
-                    label="Retirada"
+                    label="Pick-up"
                     value={formatIsoDate(rental.startDate)}
                   />
                   <ActiveRentalDate
-                    label="Devolução"
+                    label="Return"
                     value={formatIsoDate(rental.endDate)}
                   />
                   <ActiveRentalStatus endDate={rental.endDate} />
@@ -133,7 +133,7 @@ export function Home() {
           ))}
         {!isLoadingRentals && rentals.length === 0 && (
           <Text className="text-center" variant="paragraph-medium">
-            Nenhum aluguel no histórico
+            No rentals in history
           </Text>
         )}
         {!isLoadingRentals &&
@@ -164,7 +164,7 @@ export function Home() {
               <Badge
                 variant={item.status === 'returned' ? 'success' : 'danger'}
               >
-                {item.status === 'returned' ? 'Devolvido' : 'Atrasado'}
+                {item.status === 'returned' ? 'Returned' : 'Overdue'}
               </Badge>
             </RentalHistoryRow>
           ))}
@@ -176,17 +176,17 @@ export function Home() {
             onClick={() => handlePageChange(Number(filters.page) - 1)}
             className="px-3 py-1 rounded border border-zinc-600 text-sm text-zinc-300 disabled:opacity-40 hover:bg-zinc-800 transition"
           >
-            ← Anterior
+            ← Back
           </button>
           <span className="text-sm text-zinc-400">
-            Página {Number(filters.page)}
+            Page {Number(filters.page)}
           </span>
           <button
             disabled={isLastPage}
             onClick={() => handlePageChange(Number(filters.page) + 1)}
             className="px-3 py-1 rounded border border-zinc-600 text-sm text-zinc-300 disabled:opacity-40 hover:bg-zinc-800 transition"
           >
-            Próxima →
+            Next →
           </button>
         </div>
       )}

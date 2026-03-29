@@ -111,13 +111,13 @@ export function BookForm() {
 
   return (
     <FormCard
-      title="Novo Livro"
+      title="New Book"
       endpoint="POST /book/create"
       onSubmit={form.handleSubmit(handleSubmit)}
     >
       <InputField
-        label="Título"
-        placeholder="Ex: O Senhor dos Anéis"
+        label="Title"
+        placeholder="Ex: The Lord of the Rings"
         disabled={isLoading}
         error={form.formState.errors.title?.message}
         {...form.register('title')}
@@ -125,7 +125,7 @@ export function BookForm() {
 
       <div className="grid grid-cols-2 gap-3">
         <InputField
-          label="Autor"
+          label="Author"
           placeholder="J.R.R. Tolkien"
           disabled={isLoading}
           error={form.formState.errors.author?.message}
@@ -138,7 +138,7 @@ export function BookForm() {
           error={form.formState.errors.category?.message}
           {...form.register('category', { required: 'Category is required' })}
         >
-          <option value="">Selecione uma categoria</option>
+          <option value="">Select a category</option>
           {CATEGORIES.map((category) => (
             <option key={category} value={category}>
               {category}
@@ -148,13 +148,13 @@ export function BookForm() {
       </div>
 
       <Button type="submit" variant="primary" full handling={isLoading}>
-        Cadastrar Livro
+        Add Book
       </Button>
     </FormCard>
   )
 }
 
-export function RentalForm({ variant, onSubmit, handling, className }) {
+export function RentalForm({ variant, className }) {
   const form = useForm({
     resolver: zodResolver(rentalFormSchema),
     defaultValues: {
@@ -173,22 +173,22 @@ export function RentalForm({ variant, onSubmit, handling, className }) {
   return (
     <FormCard
       variant={variant}
-      title="Novo Empréstimo"
+      title="New Rental"
       endpoint="POST /rental"
       className={className}
       disabled={isLoading}
       onSubmit={form.handleSubmit(handleSubmit)}
     >
       <InputField
-        label="ID do Usuário"
-        placeholder="uuid-do-usuario"
+        label="User Id"
+        placeholder="user-uui"
         disabled={isLoading}
         {...form.register('userId')}
       />
 
       <InputField
-        label="ID do Livro"
-        placeholder="uuid-do-livro"
+        label="Book ID"
+        placeholder="book-uuid"
         disabled={isLoading}
         {...form.register('bookId')}
       />
@@ -200,7 +200,7 @@ export function RentalForm({ variant, onSubmit, handling, className }) {
         handling={isLoading}
         disabled={isLoading}
       >
-        {isLoading ? 'Criando Empréstimo...' : 'Criar Empréstimo'}
+        {isLoading ? 'Creating...' : 'Create Rental'}
       </Button>
     </FormCard>
   )

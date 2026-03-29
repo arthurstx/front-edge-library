@@ -12,12 +12,7 @@ const COLUMNS = ['Name', 'Email', 'Role', 'Actions']
 
 export function UserTable({ className }) {
   const [inputValue, setInputValue] = React.useState('')
-  const {
-    users,
-    isLoadingUsers,
-    isLastPage,
-    filters,
-  } = useUsers()
+  const { users, isLoadingUsers, isLastPage, filters } = useUsers()
 
   const isSearching =
     filters.query !== null &&
@@ -55,15 +50,13 @@ export function UserTable({ className }) {
       return (
         <tr>
           <td colSpan={4} className="py-10 text-center text-sm text-gray-400">
-            Nenhum usuário encontrado{isSearching ? ` para "${inputValue}"` : ''}.
+            No users found{isSearching ? ` for "${inputValue}"` : ''}.
           </td>
         </tr>
       )
     }
 
-    return users.map((user) => (
-      <UserTableRow key={user.id} user={user} />
-    ))
+    return users.map((user) => <UserTableRow key={user.id} user={user} />)
   }
 
   return (
@@ -79,13 +72,13 @@ export function UserTable({ className }) {
           variant="label-small"
           className="text-white uppercase tracking-wider"
         >
-          Usuários do Sistema{' '}
+          System Users{' '}
           <span className="text-gray-200 font-normal normal-case tracking-normal">
             (GET /users)
           </span>
         </Text>
         <InputField
-          placeholder="Buscar (nome, email)..."
+          placeholder="Search (name, email)..."
           value={inputValue}
           onChange={handleInputChange}
         />

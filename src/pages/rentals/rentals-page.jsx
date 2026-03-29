@@ -48,7 +48,7 @@ export function RentalsPage() {
   return (
     <Container className="flex flex-col gap-6 w-full max-w-5xl mx-auto">
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-        <Text variant="heading-large">Aluguéis</Text>
+        <Text variant="heading-large">Rentals</Text>
       </div>
 
       <div className="w-full relative">
@@ -72,7 +72,7 @@ export function RentalsPage() {
 
         {error && (
           <div className="rounded-md border border-red-500/50 bg-red-500/10 p-4 text-center text-red-500">
-            <Text>Não foi possível carregar os aluguéis no momento.</Text>
+            <Text>Failed to load rentals at the moment.</Text>
             <Text variant="paragraph-small" className="mt-1 opacity-80">
               {error.message}
             </Text>
@@ -82,7 +82,7 @@ export function RentalsPage() {
         {!isLoading && !error && rentals.length === 0 && (
           <div className="rounded-md border p-8 flex flex-col items-center justify-center text-center text-muted-foreground min-h-75">
             <Icon svg={SearchIcon} className="h-10 w-10 mb-4 opacity-20" />
-            <Text>Nenhum aluguel encontrado ou lista vazia.</Text>
+            <Text>No rentals found or empty list.</Text>
           </div>
         )}
 
@@ -127,7 +127,7 @@ export function RentalsPage() {
                     }
                     handling={isPending}
                   >
-                    Devolver Livro
+                    Return Book
                   </Button>
                 </ActiveRentalAction>
               </ActiveRentalContent>

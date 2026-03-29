@@ -16,11 +16,11 @@ export function ActiveRentalStatus({ endDate, className, ...props }) {
     if (diffDays < 0) {
       return {
         variant: 'danger',
-        label: `Atrasado ${Math.abs(diffDays)} dia(s)`,
+        label: `Overdue ${Math.abs(diffDays)} day(s)`,
       }
     }
     if (diffDays <= 3) {
-      return { variant: 'warning', label: `Vence em ${diffDays} dia(s)` }
+      return { variant: 'warning', label: `Due in ${diffDays} day(s)` }
     }
     return { variant: 'success', label: `Vence em ${diffDays} dia(s)` }
   }

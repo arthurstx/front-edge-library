@@ -22,8 +22,8 @@ import UsersIcon from '../../assets/users.svg?react'
 
 const navItems = [
   { title: 'Home', href: '/dashboard', icon: LayoutDashboardIcon },
-  { title: 'Aluguéis', href: '/dashboard/rentals', icon: ClipboardListIcon },
-  { title: 'Usuários', href: '/dashboard/users', icon: UsersIcon },
+  { title: 'Rentals', href: '/dashboard/rentals', icon: ClipboardListIcon },
+  { title: 'Users', href: '/dashboard/users', icon: UsersIcon },
 ]
 
 function NavLinks({ pathname }) {

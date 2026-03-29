@@ -30,7 +30,7 @@ export function MainHeader({ className }) {
             disabled={isloading}
             onClick={handleLogout}
           >
-            Sair
+            Logout
           </Button>
         </div>
       </Container>
